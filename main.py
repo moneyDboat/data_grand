@@ -38,7 +38,7 @@ parser.add_argument('-snapshot', type=str, default=None, help='filename of model
 
 args = parser.parse_args()
 
-train_iter, val_iter, test_iter = util.load_data()
+val_iter = util.load_data()
 
 # update args and print
 args.embed_num = 100
@@ -66,14 +66,14 @@ cnn.train()
 
 for i in range(args.epochs):
     total_loss = 0.0
-    for batch in train_iter:
+    for batch in val_iter:
         text, label = batch.text, batch.label
         if args.cuda:
             text, label = text.cuda(), label.cuda()
 
         optimizer.zero_grad()
-        logit = cnn(text)
-        loss = F.cross_entropy(logit, label)
+        pred = cnn(text)
+        loss = F.cross_entropy(pred, label)
         total_loss += loss
         loss.backward()
         optimizer.step()

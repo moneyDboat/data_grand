@@ -16,6 +16,10 @@ import word2vec
 class GrandDataset(data.Dataset):
     name = 'Grand Dataset'
 
+    @staticmethod
+    def sort_key(ex):
+        return len(ex.text)
+
     def __init__(self, path, text_field, label_field, test=False, **kwargs):
         fields = [('text', text_field), ('label', label_field)]
         examples = []
@@ -38,9 +42,10 @@ def load_data():
     train_path = '/data/yujun/datasets/daguanbei_data/new_train_set.csv'
     val_path = '/data/yujun/datasets/daguanbei_data/val_set.csv'
     test_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
-    train = GrandDataset(train_path, text_field=TEXT, label_field=LABEL)
+    # train = GrandDataset(train_path, text_field=TEXT, label_field=LABEL)
+    val_path = 'val_set.csv'
     val = GrandDataset(val_path, text_field=TEXT, label_field=LABEL)
-    test = GrandDataset(test_path, text_field=TEXT, label_field=None, test=True)
+    # test = GrandDataset(test_path, text_field=TEXT, label_field=None, test=True)
 
     # # 构建Vocub
     # w2v_path = 'emb-100.bin'
@@ -49,15 +54,15 @@ def load_data():
     # build the vocabulary
 
     #vectors = Vectors(name='word2vec', cache='.vector_cache/', unk_init=w2v.vectors)
-    TEXT.build_vocab(train, val, test)
+    TEXT.build_vocab(val)
 
     # 构建Iterator
     # train_iter = data.Iterator(dataset=train, batch_size=32, train=True, repeat=False,
     #                                device=0 if using_gpu else -1)
     # # 在 test_iter , sort一定要设置成 False, 要不然会被 torchtext 搞乱样本顺序
     # test_iter = data.Iterator(dataset=test, batch_size=64, train=False, sort=False, device=0 if using_gpu else -1)
-    train_iter = data.Iterator(dataset=train, batch_size=64, train=True, repeat=False, device=0)
+    # train_iter = data.Iterator(dataset=train, batch_size=64, train=True, repeat=False, device=0)
     val_iter = data.Iterator(dataset=val, batch_size=64, train=False, repeat=False, device=0)
-    test_iter = data.Iterator(dataset=test, batch_size=64, train=False, sort=False, device=0)
+    # test_iter = data.Iterator(dataset=test, batch_size=64, train=False, sort=False, device=0)
 
-    return train_iter, val_iter, test_iter
+    return val_iter

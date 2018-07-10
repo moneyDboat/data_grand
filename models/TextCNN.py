@@ -22,6 +22,8 @@ class TextCNN(nn.Module):
         max_len = args.max_len
         dropout = args.dropout
 
+        self.emb_dim = emb_dim
+
         '''Embedding Layer'''
         # if init_W is None:
         # 最后一个索引为填充的标记文本
