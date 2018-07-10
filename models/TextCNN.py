@@ -16,7 +16,7 @@ class TextCNN(nn.Module):
     def __init__(self, args):
         super(TextCNN, self).__init__()
         emb_dim = args.embed_dim
-        vocab_size = args.embed_num
+        vocab_size = args.vocab_size
         class_num = args.class_num
         n_filters = args.kernel_num
         max_len = args.max_len
@@ -55,11 +55,12 @@ class TextCNN(nn.Module):
         self.output_layer = nn.Linear(100, class_num)
 
     def forward(self, inputs):
-        size = len(inputs)
+        size = inputs.shape[1]
         embeds = self.embedding(inputs)
 
         # 进入卷积层前需要将Tensor第二个维度变成emb_dim，作为卷积的通道数
-        embeds = embeds.view([len(embeds), self.emb_dim, -1])
+        embeds = embeds.view([size, self.emb_dim, -1])
+
         # concatenate the tensors
         x = self.conv1(embeds)
         y = self.conv2(embeds)

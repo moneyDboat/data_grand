@@ -55,6 +55,7 @@ def load_data():
 
     #vectors = Vectors(name='word2vec', cache='.vector_cache/', unk_init=w2v.vectors)
     TEXT.build_vocab(val)
+    LABEL.build_vocab(val)
 
     # 构建Iterator
     # train_iter = data.Iterator(dataset=train, batch_size=32, train=True, repeat=False,
@@ -65,4 +66,4 @@ def load_data():
     val_iter = data.Iterator(dataset=val, batch_size=64, train=False, repeat=False, device=0)
     # test_iter = data.Iterator(dataset=test, batch_size=64, train=False, sort=False, device=0)
 
-    return val_iter
+    return val_iter, len(TEXT.vocab), len(LABEL.vocab)

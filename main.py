@@ -38,11 +38,11 @@ parser.add_argument('-snapshot', type=str, default=None, help='filename of model
 
 args = parser.parse_args()
 
-val_iter = util.load_data()
+val_iter, vocab_size, class_num = util.load_data()
 
 # update args and print
-args.embed_num = 100
-args.class_num = 19
+args.vocab_size = vocab_size
+args.class_num = class_num
 args.cuda = torch.cuda.is_available()
 args.kernel_sizes = [int(k) for k in args.kernel_sizes.split(',')]
 args.save_dir = os.path.join(args.save_dir, datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
