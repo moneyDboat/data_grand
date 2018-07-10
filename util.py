@@ -32,7 +32,7 @@ class GrandDataset(data.Dataset):
 
 
 def load_data():
-    TEXT = data.Field(sequential=True, fix_length=500)
+    TEXT = data.Field(sequential=True, fix_length=1000)
     LABEL = data.Field(sequential=False, use_vocab=False)
     # load data
     train_path = '/data/yujun/datasets/daguanbei_data/new_train_set.csv'
@@ -46,10 +46,10 @@ def load_data():
     # w2v_path = 'emb-100.bin'
     # print('loading word2vec {}'.format(w2v_path))
     # w2v = word2vec.load(w2v_path)
-    # # build the vocabulary
-    #
-    # vectors = Vectors(name='word2vec', cache='.vector_cache/', unk_init=w2v.vectors)
-    # TEXT.build_vocab(train, vectors=w2v.vectors)
+    # build the vocabulary
+
+    #vectors = Vectors(name='word2vec', cache='.vector_cache/', unk_init=w2v.vectors)
+    TEXT.build_vocab(train, val, test)
 
     # 构建Iterator
     # train_iter = data.Iterator(dataset=train, batch_size=32, train=True, repeat=False,
