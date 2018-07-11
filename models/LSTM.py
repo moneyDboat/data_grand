@@ -9,9 +9,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
+from .BasicModule import BasicModule
 
 
-class LSTM(nn.Module):
+class LSTM(BasicModule):
     def __init__(self, args):
         self.args = args
         super(LSTM, self).__init__()
@@ -59,5 +60,3 @@ class LSTM(nn.Module):
             final = lstm_out[-1]
         y = self.hidden2label(final)  # 64x3  #lstm_out[-1]
         return y
-
-
