@@ -3,7 +3,7 @@
 .data/
 emb-100.bin
 val_set.csv
-.snapshot/
+snapshot/
 
 
 # Byte-compiled / optimized / DLL files

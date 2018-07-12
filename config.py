@@ -19,8 +19,8 @@ class DefaultConfig(object):
     val_data_path = '/data/yujun/datasets/daguanbei_data/val_set.csv'
     test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
     vocab_size = 10000  # 词库规模
-    label_size = 20  # 分类类别数
-    batch_size = 128
+    label_size = 19  # 分类类别数
+    batch_size = 256
     max_text_len = 1000
     embedding_dim = 100  # number of embedding dimension
 
@@ -29,7 +29,7 @@ class DefaultConfig(object):
     lr = 0.001  # learning rate
     epochs = 100
     save_dir = 'snapshot/'  # where to save the snapshot
-    device = 0
+    device = 1
 
     # 模型参数
     dropout_rate = 0.5  # the probability for dropout

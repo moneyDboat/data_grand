@@ -63,8 +63,8 @@ class TextCNN(BasicModule):
         z = self.conv3(embeds)
         flatten = torch.cat((x.view(input_n, -1), y.view(input_n, -1), z.view(input_n, -1)), 1)
 
-        out = F.tanh(self.layer(flatten))
+        out = F.relu(self.layer(flatten))
         out = self.dropout(out)
-        out = F.tanh(self.output_layer(out))
+        out = self.output_layer(out)
 
         return out

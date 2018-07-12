@@ -8,8 +8,6 @@
 
 import torch
 import time
-import torch
-import torch.autograd as autograd
 import torch.nn.functional as F
 import models
 import util
@@ -18,12 +16,15 @@ import os
 import datetime
 from models.TextCNN import TextCNN
 
+best_acc = 0.0
 
 def main(**kwargs):
     opt = DefaultConfig()
     train_iter, val_iter, test_iter, opt.vocab_size, opt.label_size = util.load_data(opt)
     opt.cuda = torch.cuda.is_available()
     opt.print_config()
+
+    global best_acc
 
     opt.kernel_sizes = [int(k) for k in opt.kernel_sizes.split(',')]
     opt.save_dir = os.path.join(opt.save_dir, datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
@@ -42,11 +43,17 @@ def main(**kwargs):
 
     for i in range(opt.epochs):
         total_loss = 0.0
-        for batch in train_iter:
+        correct = 0
+        total = 0
+        
+        model.train()
+
+        for idx, batch in enumerate(train_iter):
             # 训练模型参数
             text, label = batch.text, batch.label
             if opt.cuda:
                 text, label = text.cuda(), label.cuda()
+
             optimizer.zero_grad()
             pred = model(text)
             loss = criterion(pred, label)
@@ -54,10 +61,24 @@ def main(**kwargs):
             optimizer.step()
 
             # 更新统计指标
-            total_loss += loss
+            total_loss += loss.item()
+            predicted = pred.max(1)[1]
+            total += label.size(0)
+            correct += predicted.eq(label).sum().item()
 
-        print('epoch {} loss : {}'.format(i, total_loss))
-        val(model, train_iter, opt)
+            if idx % 20 == 19:
+                print('[{}, {}] loss: {:.3f} | Acc: {:.3f}%({}/{})'.format(i+1, idx+1, total_loss/20, 100.*correct/total, correct, total))
+                total_loss = 0.0
+
+        accuracy = val(model, train_iter, opt)
+        if accuracy > best_acc:
+            best_acc = accuracy
+            checkpoint = {
+                'state_dict': model.state_dict(),
+                'acc': accuracy,
+                'epoch': i + 1
+            }
+            torch.save(checkpoint, opt.save_dir)
 
 
 def val(model, dataset, opt):
@@ -68,24 +89,20 @@ def val(model, dataset, opt):
 
     acc_n = 0
     val_n = 0
-    for batch in dataset:
-        text, label = batch.text, batch.label
-        if opt.cuda:
-            text, label = text.cuda(), label.cuda()
-            pred = model(text)
-            pred = torch.max(F.softmax(pred), 1)[1]
-            pred_label = pred.cpu().data.numpy().squeeze()
-            target_y = label.cpu().data.numpy()
-            acc_n += sum(pred_label == target_y)
-            val_n += len(dataset)
-
-    print('acc : %.2f' % (acc_n * 100 / val_n))
-
-    # 将模型恢复为训练模式
-    model.train()
+    with torch.no_grad():
+        for batch in dataset:
+            text, label = batch.text, batch.label
+            if opt.cuda:
+                text, label = text.cuda(), label.cuda()
+            outputs = model(text)
+            pred = outputs.max(1)[1]
+            acc_n += (pred == label).sum().item()
+            val_n += label.size(0)
+    
+    acc = 100. * acc_n / val_n
+    print('* Test Acc: {:.3f}%({}/{})'.format(acc, acc_n, val_n))
+    return acc
 
 
 if __name__ == '__main__':
-    import fire
-
-    fire.Fire()
+    main()
