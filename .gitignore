@@ -1,7 +1,7 @@
 # add by myself
 .vector_cache/
 .data/
-emb-100.bin
+emb-100.txt
 val_set.csv
 snapshot/
 .idea/

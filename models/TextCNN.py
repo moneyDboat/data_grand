@@ -23,7 +23,7 @@ class TextCNN(BasicModule):
         '''Embedding Layer'''
         # 最后一个索引为填充的标记文本
         # 使用预训练的词向量
-        self.embedding = nn.Embedding(opt.vocab_size + 1, emb_dim)
+        self.embedding = nn.Embedding(opt.vocab_size, emb_dim)
         self.embedding.weight.data.copy_(vectors)
 
         self.conv1 = nn.Sequential(
