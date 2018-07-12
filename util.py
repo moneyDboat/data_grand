@@ -9,6 +9,7 @@ from torchtext import data, datasets
 import pandas as pd
 from config import DefaultConfig
 from torchtext.vocab import Vectors
+from tqdm import tqdm
 
 
 # 定义Dataset
@@ -26,11 +27,11 @@ class GrandDataset(data.Dataset):
         print('preparing examples...')
         # 可改成data.Example.fromCsv()
         if test:
-            for text in csv_data['word_seg']:
+            for text in tqdm(csv_data['word_seg']):
                 examples.append(data.Example.fromlist([text, None], fields))
         else:
-            for text, label in zip(csv_data['word_seg'], csv_data['class']):
-                examples.append(data.Example.fromlist([text, label], fields))
+            for text, label in tqdm(zip(csv_data['word_seg'], csv_data['class'])):
+                examples.append(data.Example.fromlist([text, label-1], fields))
         super(GrandDataset, self).__init__(examples, fields, **kwargs)
 
 
@@ -55,7 +56,7 @@ def load_data(opt):
     # vectors = Vectors(name='word2vec', cache='.vector_cache/', unk_init=w2v.vectors)
     # 构建Vocab
     TEXT.build_vocab(train)
-    LABEL.build_vocab(train)
+    # LABEL.build_vocab(train) 
 
     # 构建Iterator
     # 在 test_iter , sort一定要设置成 False, 要不然会被 torchtext 搞乱样本顺序
@@ -63,4 +64,4 @@ def load_data(opt):
     val_iter = data.Iterator(dataset=val, batch_size=opt.batch_size, train=False, repeat=False, sort=False, device=opt.device)
     test_iter = data.Iterator(dataset=test, batch_size=opt.batch_size, train=False, sort=False, device=opt.device)
 
-    return train_iter, val_iter, test_iter, len(TEXT.vocab), len(LABEL.vocab)
+    return train_iter, val_iter, test_iter, len(TEXT.vocab)

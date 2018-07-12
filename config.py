@@ -20,7 +20,7 @@ class DefaultConfig(object):
     test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
     vocab_size = 10000  # 词库规模
     label_size = 19  # 分类类别数
-    batch_size = 256
+    batch_size = 128  
     max_text_len = 1000
     embedding_dim = 100  # number of embedding dimension
 
