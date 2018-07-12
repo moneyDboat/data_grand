@@ -20,7 +20,7 @@ best_acc = 0.0
 
 def main(**kwargs):
     opt = DefaultConfig()
-    train_iter, val_iter, test_iter, opt.vocab_size = util.load_data(opt)
+    train_iter, val_iter,  opt.vocab_size, vectors = util.load_data(opt)
     opt.cuda = torch.cuda.is_available()
     opt.print_config()
 
@@ -30,7 +30,7 @@ def main(**kwargs):
     opt.save_dir = os.path.join(opt.save_dir, 'model_best.pth.tar')
 
     # model
-    model = getattr(models, opt.model)(opt)
+    model = getattr(models, opt.model)(opt, vectors)
 
     if opt.cuda:
         torch.cuda.set_device(opt.device)

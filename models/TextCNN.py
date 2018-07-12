@@ -13,7 +13,7 @@ from .BasicModule import BasicModule
 
 
 class TextCNN(BasicModule):
-    def __init__(self, opt):
+    def __init__(self, opt, vectors):
         super(TextCNN, self).__init__()
         self.opt = opt
         emb_dim = opt.embedding_dim
@@ -22,7 +22,9 @@ class TextCNN(BasicModule):
 
         '''Embedding Layer'''
         # 最后一个索引为填充的标记文本
+        # 使用预训练的词向量
         self.embedding = nn.Embedding(opt.vocab_size + 1, emb_dim)
+        self.embedding.weight.data.copy_(vectors)
 
         self.conv1 = nn.Sequential(
             # 卷积层的激活函数
