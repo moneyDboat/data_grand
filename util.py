@@ -11,6 +11,7 @@ from config import DefaultConfig
 from torchtext.vocab import Vectors
 from tqdm import tqdm
 from torch.nn import init
+import os
 
 
 # 定义Dataset
@@ -50,7 +51,10 @@ def load_data(opt):
     val = GrandDataset(val_path, text_field=TEXT, label_field=LABEL)
     # test = GrandDataset(test_path, text_field=TEXT, label_field=None, test=True)
 
-    vectors = Vectors(name='emb-100.txt', cache='.vector_cache/')
+    cache = '.vector_cache'
+    if not os.path.exists(cache):
+        os.mkdir(cache)
+    vectors = Vectors(name='emb-100.txt', cache=cache)
     # 没有命中的token的初始化方式
     vectors.unk_init = init.xavier_uniform
     # 构建Vocab
