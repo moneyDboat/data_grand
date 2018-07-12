@@ -13,20 +13,18 @@ from .BasicModule import BasicModule
 
 
 class LSTM(BasicModule):
-    def __init__(self, args):
-        self.args = args
+    def __init__(self, opt, vectors):
         super(LSTM, self).__init__()
-        self.hidden_dim = args.hidden_dim
-        self.batch_size = args.batch_size
-        self.use_gpu = torch.cuda.is_available()
+        self.opt = opt
+        emb_dim = opt.embedding_dim
+        self.hidden_dim = opt.hidden_dim
+        self.batch_size = opt.batch_size
 
-        self.word_embeddings = nn.Embedding(args.vocab_size, args.embedding_dim)
-        self.word_embeddings.weight = nn.Parameter(args.embeddings, requires_grad=False)
-        #        self.word_embeddings.weight.data.copy_(torch.from_numpy(opt.embeddings))
+        self.embed = nn.Embedding(opt.vocab_size, emb_dim)
+        self.embed.weight.data.copy_(vectors)
 
-        # self.bidirectional = True
-        self.dropout = self.keep_dropout
-        self.bilstm = nn.LSTM(self.embedding_dim, self.hidden_dim // 2, num_layers=1, dropout=self.dropout,
+        # 双向LSTM
+        self.bilstm = nn.LSTM(emb_dim, self.hidden_dim // 2, num_layers=1, dropout=opt.lstm_dropout,
                               bidirectional=True)
         self.hidden2label = nn.Linear(self.hidden_dim, self.label_size)
         self.hidden = self.init_hidden()
@@ -44,14 +42,13 @@ class LSTM(BasicModule):
             c0 = Variable(torch.zeros(2 * self.lstm_layers, batch_size, self.hidden_dim // 2))
         return (h0, c0)
 
-        #    @profile
 
-    def forward(self, sentence):
-        embeds = self.word_embeddings(sentence)
+    def forward(self, inputs):
+        embeds = self.word_embeddings(inputs)
 
         #        x = embeds.view(sentence.size()[1], self.batch_size, -1)
         x = embeds.permute(1, 0, 2)  # we do this because the default parameter of lstm is False
-        self.hidden = self.init_hidden(sentence.size()[0])  # 2x64x64
+        self.hidden = self.init_hidden(inputs.size()[0])  # 2x64x64
         lstm_out, self.hidden = self.bilstm(x, self.hidden)  # lstm_out:200x64x128
         if self.mean == "mean":
             out = lstm_out.permute(1, 0, 2)

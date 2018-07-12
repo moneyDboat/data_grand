@@ -38,6 +38,9 @@ class DefaultConfig(object):
     kernel_num = 100  # number of each kind of kernel
     kernel_sizes = '3,4,5'  # kernel size to use for convolution
 
+    # LSTM
+    lstm_dropout = 0.5
+
     def parse(self, kwargs, print_=True):
         '''
         根据字典kwargs 更新 config参数
