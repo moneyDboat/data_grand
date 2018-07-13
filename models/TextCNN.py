@@ -53,11 +53,12 @@ class TextCNN(BasicModule):
 
     def forward(self, inputs):
         input_n = inputs.shape[1]
+        inputs = inputs.view([input_n, -1])  # [128, 1000]
         emb_dim = self.opt.embedding_dim
 
         embeds = self.embedding(inputs)
         # 进入卷积层前需要将Tensor第二个维度变成emb_dim，作为卷积的通道数
-        embeds = embeds.view([input_n, emb_dim, -1])
+        embeds = embeds.view([input_n, emb_dim, -1])  # [128, 100, 1000]
 
         # concatenate the tensors
         x = self.conv1(embeds)
