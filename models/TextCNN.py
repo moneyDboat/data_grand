@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from .BasicModule import BasicModule
-
+import pdb
 
 class TextCNN(BasicModule):
     def __init__(self, opt, vectors):
@@ -58,8 +58,9 @@ class TextCNN(BasicModule):
 
         embeds = self.embedding(inputs)
         # 进入卷积层前需要将Tensor第二个维度变成emb_dim，作为卷积的通道数
+        pdb.set_trace()
         embeds = embeds.view([input_n, emb_dim, -1])  # [128, 100, 1000]
-
+        
         # concatenate the tensors
         x = self.conv1(embeds)
         y = self.conv2(embeds)

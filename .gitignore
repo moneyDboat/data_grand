@@ -5,7 +5,7 @@ emb-100.txt
 val_set.csv
 snapshot/
 .idea/
-
+emb/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
