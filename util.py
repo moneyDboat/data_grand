@@ -56,7 +56,7 @@ def load_data(opt):
     cache = '.vector_cache'
     if not os.path.exists(cache):
         os.mkdir(cache)
-    vectors = Vectors(name=opt.embed_path, cache=cache) # 'emb-100.txt'
+    vectors = Vectors(name=opt.embedding_path, cache=cache) # 'emb-100.txt'
     # 没有命中的token的初始化方式
     vectors.unk_init = init.xavier_uniform
     # 构建Vocab
