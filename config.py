@@ -50,6 +50,9 @@ class DefaultConfig(object):
     lstm_dropout = 0.1
     lstm_layers = 1
 
+    # fastText
+    linear_hidden_size = 2000  # 全连接层隐藏元数目
+
     def parse(self, kwargs, print_=True):
         '''
         根据字典kwargs 更新 config参数
