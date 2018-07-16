@@ -20,8 +20,8 @@ class LSTM(BasicModule):
         self.use_gpu = args.use_gpu
         self.lstm_layers = args.lstm_layers
 
-        self.word_embeddings = nn.Embedding(args.vocab_size, args.embedding_dim)
-        self.word_embeddings.weight.data.copy_(vectors)
+        self.embedding = nn.Embedding(args.vocab_size, args.embedding_dim)
+        self.embedding.weight.data.copy_(vectors)
 
         self.bidirectional = True
         if self.lstm_layers > 1:
@@ -54,9 +54,9 @@ class LSTM(BasicModule):
         return (h0, c0)
 
     def forward(self, sentence):
-        embeds = self.word_embeddings(sentence)
+        embed = self.embedding(sentence)
 
-        x = embeds
+        x = embed
         # x = embeds.permute(1, 0, 2)  # we do this because the default parameter of lstm is False
         lstm_out, _ = self.bilstm(x)  # lstm_out: 1000x128x100
         '''

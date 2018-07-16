@@ -18,18 +18,35 @@ class DefaultConfig(object):
     train_data_path = '/data/yujun/datasets/daguanbei_data/new_train_set.csv'
     val_data_path = '/data/yujun/datasets/daguanbei_data/val_set.csv'
     test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
+    data_cate = 'word_seg' # 使用词表示还是字符表示('article')
+    embedding_path = 'emb/emb-100.txt' # 使用的预训练词向量
+    embedding_dim = 100  # number of embedding dimension
+
     vocab_size = 10000  # 词库规模
     label_size = 19  # 分类类别数
     batch_size = 128
-    max_text_len = 1000
-    embedding_dim = 100  # number of embedding dimension
+    max_text_len = 2000
 
     # 训练参数
     use_gpu = True
-    lr = 0.001  # learning rate
+    lr = 5e-3  # learning rate
+    lr_emb = 1e-3 # embedding层的学习率
+    min_lr = 1e-5 # 当学习率低于这个值时，就退出训练
+    lr_decay = 0.99 # 当一个epoch的损失开始上升时，lr ＝ lr*lr_decay
+    decay_every = 100 #每多少个batch查看val acc，并修改学习率
+    weight_decay = 0  # 2e-5 # 权重衰减
     epochs = 100
     save_dir = 'snapshot/'  # where to save the snapshot
     device = 3
+    static = False  # 是否训练embedding
+
+    # lr = 5e-3 # 学习率
+    # lr2 = 1e-3 # embedding层的学习率
+    # min_lr = 1e-5 # 当学习率低于这个值，就退出训练
+    # lr_decay = 0.99 # 当一个epoch的损失开始上升lr = lr*lr_decay
+    # weight_decay = 0 #2e-5 # 权重衰减
+    # weight = 1 # 正负样本的weight
+    # decay_every = 3000 #每多少个batch 查看一下score,并随之修改学习率
 
     # TextCNN
     kernel_num = 100  # number of each kind of kernel

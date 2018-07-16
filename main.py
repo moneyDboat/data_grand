@@ -74,15 +74,26 @@ def main(**kwargs):
                                                                            100. * correct / total, correct, total))
                 total_loss = 0.0
 
+            if idx % opt.decay_every == opt.decay_every - 1:
+                accuracy = val(model, val_iter, opt)
+                if accuracy > best_acc:
+                    best_acc = accuracy
+                    best_path = model.save(name=str(accuracy), new=True)
+                elif accuracy < best_acc:
+                    model.load(best_path, change_opt=False)
+                    lr = lr * opt.lr_decay
+                    print('decay learning rate: {}'.format(lr))
+                    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=opt.lr)
+
         accuracy = val(model, val_iter, opt)
         if accuracy > best_acc:
             best_acc = accuracy
-            checkpoint = {
-                'state_dict': model.state_dict(),
-                'acc': accuracy,
-                'epoch': i + 1
-            }
-            torch.save(checkpoint, opt.save_dir)
+            best_path = model.save(name=str(accuracy), new=True)
+        elif accuracy < best_acc:
+            model.load(best_path, change_opt=False)
+            lr = lr * opt.lr_decay
+            print('decay learning rate: {}'.format(lr))
+            optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=opt.lr)
 
 
 def val(model, dataset, opt):
