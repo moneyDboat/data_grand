@@ -28,7 +28,7 @@ class DefaultConfig(object):
     max_text_len = 2000
 
     # 训练参数
-    use_gpu = True
+    cuda = True
     lr = 5e-3  # learning rate
     lr_emb = 1e-3 # embedding层的学习率
     min_lr = 1e-5 # 当学习率低于这个值时，就退出训练
