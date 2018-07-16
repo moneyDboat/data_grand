@@ -20,7 +20,7 @@ class DefaultConfig(object):
     test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
     vocab_size = 10000  # 词库规模
     label_size = 19  # 分类类别数
-    batch_size = 128  
+    batch_size = 128
     max_text_len = 1000
     embedding_dim = 100  # number of embedding dimension
 
@@ -29,17 +29,17 @@ class DefaultConfig(object):
     lr = 0.001  # learning rate
     epochs = 100
     save_dir = 'snapshot/'  # where to save the snapshot
-    device = 1
-
-    # 模型参数
-    dropout_rate = 0.5  # the probability for dropout
+    device = 3
 
     # TextCNN
     kernel_num = 100  # number of each kind of kernel
     kernel_sizes = '3,4,5'  # kernel size to use for convolution
+    dropout_rate = 0.5  # the probability for dropout
 
-    # LSTM
-    lstm_dropout = 0.5
+    # BiLSTM
+    hidden_dim = 256
+    lstm_dropout = 0.1
+    lstm_layers = 1
 
     def parse(self, kwargs, print_=True):
         '''

@@ -4,7 +4,7 @@
 emb-100.txt
 val_set.csv
 snapshot/
-.idea/
+.idea/workspace.xml
 emb/
 
 # Byte-compiled / optimized / DLL files
