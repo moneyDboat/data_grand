@@ -48,7 +48,7 @@ def main(**kwargs):
     # 目标函数和优化器
     criterion = F.cross_entropy
     lr1, lr2 = opt.lr1, opt.lr2
-    optimizer = get_optimizer(model, lr1, lr2, opt.weight_decay)
+    optimizer = model.get_optimizer(lr1, lr2, opt.weight_decay)
 
     for i in range(opt.epochs):
         total_loss = 0.0
@@ -84,26 +84,20 @@ def main(**kwargs):
                                                                            100. * correct / total, correct, total))
                 total_loss = 0.0
 
-            if idx % opt.decay_every == opt.decay_every - 1:
-                accuracy = val(model, val_iter, opt)
-                if accuracy > best_acc:
-                    best_acc = accuracy
-                    best_path = model.save(name=str(accuracy), new=True)
-                elif accuracy < best_acc:
-                    model.load(best_path, change_opt=False)
-                    lr = lr * opt.lr_decay
-                    print('decay learning rate: {}'.format(lr))
-                    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=opt.lr)
-
-        accuracy = val(model, val_iter, opt)
-        if accuracy > best_acc:
-            best_acc = accuracy
-            best_path = model.save(name=str(accuracy), new=True)
-        elif accuracy < best_acc:
-            model.load(best_path, change_opt=False)
-            lr = lr * opt.lr_decay
-            print('decay learning rate: {}'.format(lr))
-            optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=opt.lr)
+        f1score = val(model, val_iter, opt)
+        if f1score > best_acc:
+            best_score = f1score
+            checkpoint = {
+                'state_dict': model.state_dict(),
+                'f1score': f1score,
+                'epoch': i + 1
+            }
+            torch.save(checkpoint, opt.save_dir)
+        if f1score < best_score:
+            model = torch.load(opt.save_dir)
+            lr1 *= 0.8
+            lr2 = 2e-4 if lr2 == 0 else lr2 * 0.8
+            optimizer = model.get_optimizer(lr1, lr2, opt.weight_decay)
 
 
 def val(model, dataset, opt):
