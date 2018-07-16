@@ -37,9 +37,9 @@ def main(**kwargs):
     model = getattr(models, opt.model)(opt, vectors)
 
     # fix the parameters of embedding layers
-    for layer, param in enumerate(model.parameters()):
-        if layer == 0:
-            param.requires_grad = False
+    # for layer, param in enumerate(model.parameters()):
+    #    if layer == 0:
+    #        param.requires_grad = False
 
     if opt.cuda:
         torch.cuda.set_device(opt.device)
