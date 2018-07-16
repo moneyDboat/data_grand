@@ -43,14 +43,23 @@ class BasicModule(torch.nn.Module):
         torch.save(data, path)
         return path
 
-        # def get_optimizer(self, lr, lr_emb=0, weight_decay=0):
-        #     ignored_params = list(map(id, self.embedding.parameters()))
-        #     base_params = filter(lambda p: id(p) not in ignored_params,
-        #                          self.parameters())
-        #     if lr_emb is None:
-        #         lr_emb = lr * 0.5
-        #     optimizer = torch.optim.Adam([
-        #         dict(params=base_params, weight_decay=weight_decay, lr=lr),
-        #         {'params': self.embedding.parameters(), 'lr': lr_emb}
-        #     ])
-        #     return optimizer
+    def get_optimizer(self, lr1, lr2=0, weight_decay=0):
+        embed_params = list(map(id, self.embedding.parameters()))
+        base_params = filter(lambda p: id(p) not in embed_params, self.parameters())
+        optimizer = torch.optim.Adam([
+            {'params': self.embedding.parameters(), 'lr': lr2},
+            {'params': base_params, 'lr': lr1, 'weight_decay': weight_decay}
+        ])
+        return optimizer
+
+    # def get_optimizer(self, lr, lr_emb=0, weight_decay=0):
+    #     ignored_params = list(map(id, self.embedding.parameters()))
+    #     base_params = filter(lambda p: id(p) not in ignored_params,
+    #                          self.parameters())
+    #     if lr_emb is None:
+    #         lr_emb = lr * 0.5
+    #     optimizer = torch.optim.Adam([
+    #         dict(params=base_params, weight_decay=weight_decay, lr=lr),
+    #         {'params': self.embedding.parameters(), 'lr': lr_emb}
+    #     ])
+    #     return optimizer

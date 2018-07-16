@@ -13,7 +13,11 @@ import models
 import util
 from config import DefaultConfig
 import os
+import datetime
 from models.TextCNN import TextCNN
+from sklearn import metrics
+from torch.nn.utils import clip_grad_norm
+import numpy as np
 
 best_acc = 0.0
 
@@ -24,13 +28,14 @@ def main(**kwargs):
     opt.cuda = torch.cuda.is_available()
     opt.print_config()
 
-    global best_acc
+    global best_score
 
     opt.kernel_sizes = [int(k) for k in opt.kernel_sizes.split(',')]
     opt.save_dir = os.path.join(opt.save_dir, '{}_model_best.pth.tar'.format(opt.model))
 
     # model
     model = getattr(models, opt.model)(opt, vectors)
+
     # fix the parameters of embedding layers
     for layer, param in enumerate(model.parameters()):
         if layer == 0:
@@ -42,7 +47,8 @@ def main(**kwargs):
 
     # 目标函数和优化器
     criterion = F.cross_entropy
-    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=opt.lr)
+    lr1, lr2 = opt.lr1, opt.lr2
+    optimizer = get_optimizer(model, lr1, lr2, opt.weight_decay)
 
     for i in range(opt.epochs):
         total_loss = 0.0
@@ -61,6 +67,10 @@ def main(**kwargs):
             pred = model(text)
             loss = criterion(pred, label)
             loss.backward()
+            # gradient clipping
+            total_norm = clip_grad_norm(model.parameters(), 10)
+            if total_norm > 10:
+                print("clipping gradient: {} with coef {}".format(total_norm, 10 / total_norm))
             optimizer.step()
 
             # 更新统计指标
@@ -104,6 +114,8 @@ def val(model, dataset, opt):
 
     acc_n = 0
     val_n = 0
+    predict = np.zeros((0,), dtype=np.int32)
+    gt = np.zeros((0,), dtype=np.int32)
     with torch.no_grad():
         for batch in dataset:
             text, label = batch.text, batch.label
@@ -113,10 +125,13 @@ def val(model, dataset, opt):
             pred = outputs.max(1)[1]
             acc_n += (pred == label).sum().item()
             val_n += label.size(0)
+            predict = np.hstack((predict, pred.cpu().numpy()))
+            gt = np.hstack((gt, label.cpu().numpy()))
 
     acc = 100. * acc_n / val_n
-    print('* Test Acc: {:.3f}%({}/{})'.format(acc, acc_n, val_n))
-    return acc
+    f1score = np.mean(metrics.f1_score(predict, gt, average=None))
+    print('* Test Acc: {:.3f}%({}/{}), F1 Score: {}'.format(acc, acc_n, val_n, f1score))
+    return f1score
 
 
 if __name__ == '__main__':

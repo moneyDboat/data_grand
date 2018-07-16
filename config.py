@@ -29,24 +29,16 @@ class DefaultConfig(object):
 
     # 训练参数
     cuda = True
-    lr = 5e-3  # learning rate
-    lr_emb = 1e-3 # embedding层的学习率
+    lr1 = 5e-3  # learning rate
+    lr2 = 0 # embedding层的学习率
     min_lr = 1e-5 # 当学习率低于这个值时，就退出训练
-    lr_decay = 0.99 # 当一个epoch的损失开始上升时，lr ＝ lr*lr_decay
-    decay_every = 100 #每多少个batch查看val acc，并修改学习率
+    # lr_decay = 0.8 # 当一个epoch的损失开始上升时，lr ＝ lr*lr_decay
+    # decay_every = 100 #每多少个batch查看val acc，并修改学习率
     weight_decay = 0  # 2e-5 # 权重衰减
     epochs = 100
     save_dir = 'snapshot/'  # where to save the snapshot
     device = 3
-    static = False  # 是否训练embedding
-
-    # lr = 5e-3 # 学习率
-    # lr2 = 1e-3 # embedding层的学习率
-    # min_lr = 1e-5 # 当学习率低于这个值，就退出训练
-    # lr_decay = 0.99 # 当一个epoch的损失开始上升lr = lr*lr_decay
-    # weight_decay = 0 #2e-5 # 权重衰减
-    # weight = 1 # 正负样本的weight
-    # decay_every = 3000 #每多少个batch 查看一下score,并随之修改学习率
+    # static = False  # 是否训练embedding
 
     # TextCNN
     kernel_num = 100  # number of each kind of kernel
