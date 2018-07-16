@@ -19,7 +19,7 @@ class DefaultConfig(object):
     val_data_path = '/data/yujun/datasets/daguanbei_data/val_set.csv'
     test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
     data_cate = 'word_seg' # 使用词表示还是字符表示('article')
-    embedding_path = 'emb/word-100.txt' # 使用的预训练词向量
+    embedding_path = 'emb/word_100.txt' # 使用的预训练词向量
     embedding_dim = 100  # number of embedding dimension
 
     vocab_size = 10000  # 词库规模

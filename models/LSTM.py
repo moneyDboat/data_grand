@@ -17,7 +17,7 @@ class LSTM(BasicModule):
         super(LSTM, self).__init__()
         self.hidden_dim = args.hidden_dim
         self.batch_size = args.batch_size
-        self.use_gpu = args.use_gpu
+        self.cuda = args.cuda
         self.lstm_layers = args.lstm_layers
 
         self.embedding = nn.Embedding(args.vocab_size, args.embedding_dim)
