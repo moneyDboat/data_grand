@@ -12,14 +12,14 @@ class DefaultConfig(object):
     列出所有的参数，只根据模型需要获取参数
     '''
     env = 'default'  # visdom环境
-    model = 'TextCNN'  # 使用的模型，名字必须与models/__init__.py中的名字一致
+    model = 'LSTM'  # 使用的模型，名字必须与models/__init__.py中的名字一致
 
     # 数据集参数
     train_data_path = '/data/yujun/datasets/daguanbei_data/new_train_set.csv'
     val_data_path = '/data/yujun/datasets/daguanbei_data/val_set.csv'
     test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
     data_cate = 'word_seg' # 使用词表示还是字符表示('article')
-    embedding_path = 'emb/emb-100.txt' # 使用的预训练词向量
+    embedding_path = 'emb/word-100.txt' # 使用的预训练词向量
     embedding_dim = 100  # number of embedding dimension
 
     vocab_size = 10000  # 词库规模
