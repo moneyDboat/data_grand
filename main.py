@@ -93,6 +93,7 @@ def main(**kwargs):
                 'epoch': i + 1
             }
             torch.save(checkpoint, opt.save_dir)
+            print('Best tmp model f1score: {}'.format(best_score))
         if f1score < best_score:
             model = torch.load(opt.save_dir)
             lr1 *= 0.8
