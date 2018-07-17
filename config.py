@@ -34,7 +34,7 @@ class DefaultConfig(object):
     min_lr = 1e-5 # 当学习率低于这个值时，就退出训练
     # lr_decay = 0.8 # 当一个epoch的损失开始上升时，lr ＝ lr*lr_decay
     # decay_every = 100 #每多少个batch查看val acc，并修改学习率
-    weight_decay = 0  # 2e-5 # 权重衰减
+    weight_decay = 5e-4  # 2e-5 # 权重衰减
     epochs = 100
     save_dir = 'snapshot/'  # where to save the snapshot
     device = 3

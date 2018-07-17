@@ -69,8 +69,8 @@ def main(**kwargs):
             loss.backward()
             # gradient clipping
             total_norm = clip_grad_norm(model.parameters(), 10)
-            if total_norm > 10:
-                print("clipping gradient: {} with coef {}".format(total_norm, 10 / total_norm))
+            # if total_norm > 10:
+            #     print("clipping gradient: {} with coef {}".format(total_norm, 10 / total_norm))
             optimizer.step()
 
             # 更新统计指标
@@ -85,7 +85,7 @@ def main(**kwargs):
                 total_loss = 0.0
 
         f1score = val(model, val_iter, opt)
-        if f1score > best_acc:
+        if f1score > best_score:
             best_score = f1score
             checkpoint = {
                 'state_dict': model.state_dict(),
@@ -95,8 +95,8 @@ def main(**kwargs):
             torch.save(checkpoint, opt.save_dir)
             print('Best tmp model f1score: {}'.format(best_score))
         if f1score < best_score:
-            model = torch.load(opt.save_dir)
-            lr1 *= 0.8
+            model.load_state_dict(torch.load(opt.save_dir)['state_dict'])
+            lr1 *= 0.99
             lr2 = 2e-4 if lr2 == 0 else lr2 * 0.8
             optimizer = model.get_optimizer(lr1, lr2, opt.weight_decay)
 
