@@ -19,7 +19,7 @@ from sklearn import metrics
 from torch.nn.utils import clip_grad_norm
 import numpy as np
 
-best_acc = 0.0
+best_score = 0.0
 
 
 def main(**kwargs):
@@ -31,7 +31,7 @@ def main(**kwargs):
     global best_score
 
     opt.kernel_sizes = [int(k) for k in opt.kernel_sizes.split(',')]
-    opt.save_dir = os.path.join(opt.save_dir, '{}_model_best.pth.tar'.format(opt.model))
+    opt.save_dir = os.path.join(opt.save_dir, '{}_{}.pth.tar'.format(opt.model, opt.id))
 
     # model
     model = getattr(models, opt.model)(opt, vectors)
@@ -90,14 +90,15 @@ def main(**kwargs):
             checkpoint = {
                 'state_dict': model.state_dict(),
                 'f1score': f1score,
-                'epoch': i + 1
+                'epoch': i + 1,
+                'config': opt
             }
             torch.save(checkpoint, opt.save_dir)
             print('Best tmp model f1score: {}'.format(best_score))
         if f1score < best_score:
             model.load_state_dict(torch.load(opt.save_dir)['state_dict'])
-            lr1 *= 0.99
-            lr2 = 2e-4 if lr2 == 0 else lr2 * 0.8
+            lr1 *= 0.8
+            # lr2 = 2e-4 if lr2 == 0 else lr2 * 0.8
             optimizer = model.get_optimizer(lr1, lr2, opt.weight_decay)
 
 

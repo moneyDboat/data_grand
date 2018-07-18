@@ -6,7 +6,7 @@ val_set.csv
 snapshot/
 .idea/workspace.xml
 emb/
-log.txt
+*.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
