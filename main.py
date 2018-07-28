@@ -98,7 +98,7 @@ def main(**kwargs):
         if f1score < best_score:
             model.load_state_dict(torch.load(opt.save_dir)['state_dict'])
             lr1 *= 0.8
-            # lr2 = 2e-4 if lr2 == 0 else lr2 * 0.8
+            lr2 = 2e-4 if lr2 == 0 else lr2 * 0.8
             optimizer = model.get_optimizer(lr1, lr2, opt.weight_decay)
 
 

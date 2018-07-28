@@ -18,18 +18,18 @@ class DefaultConfig(object):
     train_data_path = '/data/yujun/datasets/daguanbei_data/new_train_set.csv'
     val_data_path = '/data/yujun/datasets/daguanbei_data/val_set.csv'
     test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
-    data_cate = 'article' # 使用词表示还是字符表示('article')
-    embedding_path = 'emb/article_200.txt' # 使用的预训练词向量
+    data_cate = 'word_seg' # 使用词表示还是字符表示('article')
+    embedding_path = 'emb/word_200.txt' # 使用的预训练词向量
     embedding_dim = 200  # number of embedding dimension
 
     vocab_size = 10000  # 词库规模
     label_size = 19  # 分类类别数
     batch_size = 128
-    max_text_len = 5000
+    max_text_len = 1000
 
     # 训练参数
     # cuda = True
-    lr1 = 5e-3  # learning rate
+    lr1 = 2e-3  # learning rate
     lr2 = 0 # embedding层的学习率
     min_lr = 1e-5 # 当学习率低于这个值时，就退出训练
     # lr_decay = 0.8 # 当一个epoch的损失开始上升时，lr ＝ lr*lr_decay
@@ -37,8 +37,8 @@ class DefaultConfig(object):
     weight_decay = 0 # 2e-5 # 权重衰减
     epochs = 50
     save_dir = 'snapshot/'  # where to save the snapshot
-    id ='a2'
-    device = 1
+    id ='w5'
+    device = 10
     # static = False  # 是否训练embedding
 
     # TextCNN
