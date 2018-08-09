@@ -10,6 +10,7 @@ import pandas as pd
 from config import DefaultConfig
 from torchtext.vocab import Vectors
 from tqdm import tqdm
+import torch
 from torch.nn import init
 import os
 
