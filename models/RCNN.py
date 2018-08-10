@@ -69,7 +69,7 @@ class RCNN(BasicModule):
             nn.Linear(2 * (100 + 200), args.linear_hidden_size),
             nn.BatchNorm1d(args.linear_hidden_size),
             nn.ReLU(inplace=True),
-            nn.Linear(2000, args.label_size)
+            nn.Linear(args.linear_hidden_size, args.label_size)
         )
 
     def forward(self, text, article):

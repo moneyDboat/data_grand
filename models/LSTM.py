@@ -55,7 +55,7 @@ class LSTM(BasicModule):
             nn.Linear(self.kmax_pooling * (args.hidden_dim * 2 * 2), args.linear_hidden_size),
             nn.BatchNorm1d(args.linear_hidden_size),
             nn.ReLU(inplace=True),
-            nn.Linear(100, args.label_size)
+            nn.Linear(args.linear_hidden_size, args.label_size)
         )
 
         # self.hidden = self.init_hidden(args.batch_size)

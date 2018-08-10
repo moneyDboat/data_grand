@@ -42,7 +42,7 @@ class DefaultConfig(object):
     lr2 = 0  # embedding层的学习率
     min_lr = 1e-5  # 当学习率低于这个值时，就退出训练
     # lr_decay = 0.8 # 当一个epoch的损失开始上升时，lr ＝ lr*lr_decay
-    # decay_every = 100 #每多少个batch查看val acc，并修改学习率
+    # decay_every = 100 #每多少个batch  查看val acc，并修改学习率
     weight_decay = 0  # 2e-5 # 权重衰减
     epochs = 50
     save_dir = 'snapshot/'  # where to save the snapshot
@@ -64,9 +64,6 @@ class DefaultConfig(object):
     kmax_pooling = 2
 
     # RCNN
-
-    # fastText
-    linear_hidden_size = 2000  # 全连接层隐藏元数目
 
     def parse(self, kwargs, print_=True):
         '''
