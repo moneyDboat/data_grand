@@ -10,7 +10,6 @@ import pandas as pd
 from config import DefaultConfig
 from torchtext.vocab import Vectors
 from tqdm import tqdm
-import torch
 from torch.nn import init
 import os
 
@@ -23,25 +22,26 @@ class GrandDataset(data.Dataset):
     def sort_key(ex):
         return len(ex.text)
 
-    def __init__(self, path, text_field, label_field, test=False, category='word_seg', **kwargs):
-        fields = [('text', text_field), ('label', label_field)]
+    def __init__(self, path, text_field, art_field, label_field, test=False, **kwargs):
+        fields = [('text', text_field), ('article', art_field), ('label', label_field)]
         examples = []
         csv_data = pd.read_csv(path)
         print('preparing examples...')
-        # 可改成data.Example.fromCsv()
-        col = category # 'article' or 'word_seg'
 
         if test:
-            for text in tqdm(csv_data[col]):
+            # 如果为测试集，则不加载label
+            for text, article in tqdm(zip(csv_data['word_seg'], csv_data['article'])):
                 examples.append(data.Example.fromlist([text, None], fields))
         else:
-            for text, label in tqdm(zip(csv_data[col], csv_data['class'])):
-                examples.append(data.Example.fromlist([text, label - 1], fields))
+            for text, article, label in tqdm(zip(csv_data['word_seg'], csv_data['article'], csv_data['class'])):
+                examples.append(data.Example.fromlist([text, article, label - 1], fields))
         super(GrandDataset, self).__init__(examples, fields, **kwargs)
 
 
 def load_data(opt):
-    TEXT = data.Field(sequential=True, fix_length=1000)
+    # 不设置fix_length
+    TEXT = data.Field(sequential=True, fix_length=1000)  # 词
+    ART = data.Field(sequential=True, fix_length=5000)  # 字符
     LABEL = data.Field(sequential=False, use_vocab=False)
 
     # load data
@@ -50,18 +50,22 @@ def load_data(opt):
     # 先不加载test dataset
     # test_path = opt.test_data_path
 
-    train = GrandDataset(train_path, text_field=TEXT, label_field=LABEL, category=opt.data_cate)
-    val = GrandDataset(val_path, text_field=TEXT, label_field=LABEL, category=opt.data_cate)
+    train = GrandDataset(train_path, text_field=TEXT, art_field=ART, label_field=LABEL)
+    val = GrandDataset(val_path, text_field=TEXT, art_field=ART, label_field=LABEL)
     # test = GrandDataset(test_path, text_field=TEXT, label_field=None, test=True)
 
     cache = '.vector_cache'
     if not os.path.exists(cache):
         os.mkdir(cache)
-    vectors = Vectors(name=opt.embedding_path, cache=cache) # 'emb-100.txt'
+    word_vectors = Vectors(name=opt.word_embedding_path, cache=cache)
+    art_vectors = Vectors(name=opt.art_embedding_path, cache=cache)
+
     # 没有命中的token的初始化方式
-    vectors.unk_init = init.xavier_uniform
+    word_vectors.unk_init = init.xavier_uniform_
+    art_vectors.unk_init = init.xavier_uniform_
     # 构建Vocab
-    TEXT.build_vocab(train, vectors=vectors)
+    TEXT.build_vocab(train, vectors=word_vectors)
+    ART.build_vocab(train, vectors=art_vectors)
     # LABEL.build_vocab(train) 
 
     # 构建Iterator
@@ -71,4 +75,4 @@ def load_data(opt):
                              device=opt.device)
     # test_iter = data.Iterator(dataset=test, batch_size=opt.batch_size, train=False, sort=False, device=opt.device)
 
-    return train_iter, val_iter, len(TEXT.vocab), TEXT.vocab.vectors
+    return train_iter, val_iter, len(TEXT.vocab), len(ART.vocab), TEXT.vocab.vectors, ART.vocab.vectors

@@ -44,10 +44,11 @@ class BasicModule(torch.nn.Module):
         return path
 
     def get_optimizer(self, lr1, lr2=0, weight_decay=0):
-        embed_params = list(map(id, self.embedding.parameters()))
+        embed_params = list(map(id, self.word_embedding.parameters())) + list(map(id, self.art_embedding.parameters()))
         base_params = filter(lambda p: id(p) not in embed_params, self.parameters())
         optimizer = torch.optim.Adam([
-            {'params': self.embedding.parameters(), 'lr': lr2},
+            {'params': self.word_embedding.parameters(), 'lr': lr2},
+            {'params': self.art_embedding.parameters(), 'lr': lr2},
             {'params': base_params, 'lr': lr1, 'weight_decay': weight_decay}
         ])
         return optimizer

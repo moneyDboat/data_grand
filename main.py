@@ -16,41 +16,45 @@ import os
 import datetime
 from models.TextCNN import TextCNN
 from sklearn import metrics
-from torch.nn.utils import clip_grad_norm
+from torch.nn.utils import clip_grad_norm_
 import numpy as np
 
 best_score = 0.0
 
 
 def main(**kwargs):
-    opt = DefaultConfig()
-    train_iter, val_iter, opt.vocab_size, vectors = util.load_data(opt)
-    opt.cuda = torch.cuda.is_available()
-    opt.print_config()
+    args = DefaultConfig()
+    train_iter, val_iter, args.word_vocab_size, args.art_vocab_size, word_vectors, art_vectors = util.load_data(args)
+
+    args.cuda = torch.cuda.is_available()
+    args.print_config()
 
     global best_score
 
-    opt.kernel_sizes = [int(k) for k in opt.kernel_sizes.split(',')]
-    opt.save_dir = os.path.join(opt.save_dir, '{}_{}.pth.tar'.format(opt.model, opt.id))
+    args.kernel_sizes = [int(k) for k in args.kernel_sizes.split(',')]
+    # 模型保存位置
+    if not os.path.exists(args.save_dir):
+        os.mkdir(args.save_dir)
+    save_path = os.path.join(args.save_dir, '{}_{}.pth.tar'.format(args.model, args.id))
 
     # model
-    model = getattr(models, opt.model)(opt, vectors)
+    model = getattr(models, args.model)(args, word_vectors, art_vectors)
 
     # fix the parameters of embedding layers
     # for layer, param in enumerate(model.parameters()):
     #    if layer == 0:
     #        param.requires_grad = False
 
-    if opt.cuda:
-        torch.cuda.set_device(opt.device)
+    if args.cuda:
+        torch.cuda.set_device(args.device)
         model.cuda()
 
     # 目标函数和优化器
     criterion = F.cross_entropy
-    lr1, lr2 = opt.lr1, opt.lr2
-    optimizer = model.get_optimizer(lr1, lr2, opt.weight_decay)
+    lr1, lr2 = args.lr1, args.lr2
+    optimizer = model.get_optimizer(lr1, lr2, args.weight_decay)
 
-    for i in range(opt.epochs):
+    for i in range(args.epochs):
         total_loss = 0.0
         correct = 0
         total = 0
@@ -59,16 +63,16 @@ def main(**kwargs):
 
         for idx, batch in enumerate(train_iter):
             # 训练模型参数
-            text, label = batch.text, batch.label
-            if opt.cuda:
-                text, label = text.cuda(), label.cuda()
+            text, article, label = batch.text, batch.article, batch.label
+            if args.cuda:
+                text, article, label = text.cuda(), article.cuda(), label.cuda()
 
             optimizer.zero_grad()
-            pred = model(text)
+            pred = model(text, article)
             loss = criterion(pred, label)
             loss.backward()
             # gradient clipping
-            total_norm = clip_grad_norm(model.parameters(), 10)
+            total_norm = clip_grad_norm_(model.parameters(), 10)
             # if total_norm > 10:
             #     print("clipping gradient: {} with coef {}".format(total_norm, 10 / total_norm))
             optimizer.step()
@@ -84,25 +88,25 @@ def main(**kwargs):
                                                                            100. * correct / total, correct, total))
                 total_loss = 0.0
 
-        f1score = val(model, val_iter, opt)
+        f1score = val(model, val_iter, args)
         if f1score > best_score:
             best_score = f1score
             checkpoint = {
                 'state_dict': model.state_dict(),
                 'f1score': f1score,
                 'epoch': i + 1,
-                'config': opt
+                'config': args
             }
-            torch.save(checkpoint, opt.save_dir)
+            torch.save(checkpoint, save_path)
             print('Best tmp model f1score: {}'.format(best_score))
         if f1score < best_score:
-            model.load_state_dict(torch.load(opt.save_dir)['state_dict'])
+            model.load_state_dict(torch.load(save_path)['state_dict'])
             lr1 *= 0.8
             lr2 = 2e-4 if lr2 == 0 else lr2 * 0.8
-            optimizer = model.get_optimizer(lr1, lr2, opt.weight_decay)
+            optimizer = model.get_optimizer(lr1, lr2, args.weight_decay)
 
 
-def val(model, dataset, opt):
+def val(model, dataset, args):
     # 计算模型在验证集上的分数
 
     # 将模型设为验证模式
@@ -114,10 +118,10 @@ def val(model, dataset, opt):
     gt = np.zeros((0,), dtype=np.int32)
     with torch.no_grad():
         for batch in dataset:
-            text, label = batch.text, batch.label
-            if opt.cuda:
-                text, label = text.cuda(), label.cuda()
-            outputs = model(text)
+            text, article, label = batch.text, batch.article, batch.label
+            if args.cuda:
+                text, article, label = text.cuda(), article, label.cuda()
+            outputs = model(text, article)
             pred = outputs.max(1)[1]
             acc_n += (pred == label).sum().item()
             val_n += label.size(0)
