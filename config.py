@@ -58,6 +58,9 @@ class DefaultConfig(object):
     hidden_dim = 256
     lstm_dropout = 0  # 只有当lstm_layers > 1时，设置lstm_dropout才有意义
     lstm_layers = 1
+    kmax_pooling = 2
+
+    # RCNN
 
     # fastText
     linear_hidden_size = 2000  # 全连接层隐藏元数目
