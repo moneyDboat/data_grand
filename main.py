@@ -63,6 +63,9 @@ def main(**kwargs):
 
         for idx, batch in enumerate(train_iter):
             # 训练模型参数
+            # 使用BatchNorm层时，batch size不能为1
+            if len(batch) == 1:
+                continue
             text, article, label = batch.text, batch.article, batch.label
             if args.cuda:
                 text, article, label = text.cuda(), article.cuda(), label.cuda()

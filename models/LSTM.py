@@ -50,9 +50,10 @@ class LSTM(BasicModule):
 
         # self.fc = nn.Linear(args.hidden_dim * 2 * 2, args.label_size)
         # 两层全连接层，中间添加批标准化层
+        # 全连接层隐藏元个数需要再做修改
         self.fc = nn.Sequential(
-            nn.Linear(self.kmax_pooling * (args.hidden_dim * 2 * 2), 100),
-            nn.BatchNorm1d(100),
+            nn.Linear(self.kmax_pooling * (args.hidden_dim * 2 * 2), args.linear_hidden_size),
+            nn.BatchNorm1d(args.linear_hidden_size),
             nn.ReLU(inplace=True),
             nn.Linear(100, args.label_size)
         )
