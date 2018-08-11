@@ -12,27 +12,27 @@ class DefaultConfig(object):
     列出所有的参数，只根据模型需要获取参数
     '''
     env = 'default'  # visdom环境
-    model = 'LSTM'  # 使用的模型，名字必须与models/__init__.py中的名字一致
+    model = 'TextCNN'  # 使用的模型，名字必须与models/__init__.py中的名字一致
 
     # 数据集参数
     # train_data_path = '/data/yujun/datasets/daguanbei_data/new_train_set.csv'
     # val_data_path = '/data/yujun/datasets/daguanbei_data/val_set.csv'
     # test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
+    # embedding_path = '/data/yujun/captain/emb'  # 使用的预训练词向量
+    # embedding_dim = 300  # number of embedding dimension
+
     # 在自己的PC上小数据集调试代码用
     train_data_path = '~/git/dataset/val_set.csv'
     test_data_path = '~/git/dataset/val_set.csv'
     val_data_path = '~/git/dataset/val_set.csv'
-    embedding_path = '/home/captain/git/emb/word_100.txt'
-
-    # embedding_path = '/data/yujun/captain/emb/word_100.txt'  # 使用的预训练词向量
-
-    embedding_dim = 100  # number of embedding dimension
+    embedding_path = '/home/captain/git/emb'  # 预训练词向量的位置
+    embedding_dim = 100
 
     vocab_size = 10000  # 词库规模，配置中写的值没有意义，实际是预处理阶段获取
     label_size = 19  # 分类类别数
-    batch_size = 64
+    batch_size = 128
     max_text_len = 1000  # 之后会处理成变长的，这里的设置没有意义
-    text_type = 'word_seg'  # or 'article'
+    text_type = 'word'  # or 'article'
 
     # 训练参数
     # cuda = True
@@ -51,7 +51,7 @@ class DefaultConfig(object):
     linear_hidden_size = 500  # 原来为2000，之后还需要修改，感觉数值有点大
 
     # TextCNN
-    kernel_num = 100  # number of each kind of kernel
+    kernel_num = 200  # number of each kind of kernel
     kernel_sizes = '3,4,5'  # kernel size to use for convolution
     dropout_rate = 0.5  # the probability for dropout
 

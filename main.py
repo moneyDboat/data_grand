@@ -74,8 +74,8 @@ def main(**kwargs):
             pred = model(text)
             loss = criterion(pred, label)
             loss.backward()
-            # gradient clipping
-            total_norm = clip_grad_norm_(model.parameters(), 10)
+            # gradient clipping 梯度裁剪
+            # total_norm = clip_grad_norm_(model.parameters(), 10)
             # if total_norm > 10:
             #     print("clipping gradient: {} with coef {}".format(total_norm, 10 / total_norm))
             optimizer.step()
