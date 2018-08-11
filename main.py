@@ -107,6 +107,7 @@ def main(**kwargs):
             lr1 *= 0.8
             lr2 = 2e-4 if lr2 == 0 else lr2 * 0.8
             optimizer = model.get_optimizer(lr1, lr2, args.weight_decay)
+            print('* model lr:{}  emb lr:{}'.format(lr1, lr2))
 
 
 def val(model, dataset, args):

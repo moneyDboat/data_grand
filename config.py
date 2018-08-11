@@ -12,7 +12,7 @@ class DefaultConfig(object):
     列出所有的参数，只根据模型需要获取参数
     '''
     env = 'default'  # visdom环境
-    model = 'TextCNN'  # 使用的模型，名字必须与models/__init__.py中的名字一致
+    model = 'FastText'  # 使用的模型，名字必须与models/__init__.py中的名字一致
 
     # 数据集参数
     # train_data_path = '/data/yujun/datasets/daguanbei_data/new_train_set.csv'
@@ -30,13 +30,13 @@ class DefaultConfig(object):
 
     vocab_size = 10000  # 词库规模，配置中写的值没有意义，实际是预处理阶段获取
     label_size = 19  # 分类类别数
-    batch_size = 128
+    batch_size = 16
     max_text_len = 1000  # 之后会处理成变长的，这里的设置没有意义
     text_type = 'word'  # or 'article'
 
     # 训练参数
     # cuda = True
-    lr1 = 2e-3  # learning rate
+    lr1 = 1e-3  # learning rate
     lr2 = 0  # embedding层的学习率
     min_lr = 1e-5  # 当学习率低于这个值时，就退出训练
     # lr_decay = 0.8 # 当一个epoch的损失开始上升时，lr ＝ lr*lr_decay
