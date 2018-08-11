@@ -24,7 +24,7 @@ best_score = 0.0
 
 def main(**kwargs):
     args = DefaultConfig()
-    train_iter, val_iter, args.vocab_size, vectors = util.load_data(args, args.text_type)
+    train_iter, val_iter, args.word_vocab_size, args.art_vocab_size, word_vectors, art_vectors = util.load_data(args)
 
     args.cuda = torch.cuda.is_available()
     args.print_config()
@@ -38,7 +38,7 @@ def main(**kwargs):
     save_path = os.path.join(args.save_dir, '{}_{}.pth.tar'.format(args.model, args.id))
 
     # model
-    model = getattr(models, args.model)(args, vectors)
+    model = getattr(models, args.model)(args, word_vectors, art_vectors)
 
     # fix the parameters of embedding layers
     # for layer, param in enumerate(model.parameters()):
@@ -66,12 +66,12 @@ def main(**kwargs):
             # 使用BatchNorm层时，batch size不能为1
             if len(batch) == 1:
                 continue
-            text, label = batch.text, batch.label
+            text, article, label = batch.text, batch.article, batch.label
             if args.cuda:
-                text, label = text.cuda(), label.cuda()
+                text, article, label = text.cuda(), article.cuda(), label.cuda()
 
             optimizer.zero_grad()
-            pred = model(text)
+            pred = model(text, article)
             loss = criterion(pred, label)
             loss.backward()
             # gradient clipping
@@ -121,10 +121,10 @@ def val(model, dataset, args):
     gt = np.zeros((0,), dtype=np.int32)
     with torch.no_grad():
         for batch in dataset:
-            text, label = batch.text, batch.label
+            text, article, label = batch.text, batch.article, batch.label
             if args.cuda:
-                text, label = text.cuda(), label.cuda()
-            outputs = model(text)
+                text, article, label = text.cuda(), article, label.cuda()
+            outputs = model(text, article)
             pred = outputs.max(1)[1]
             acc_n += (pred == label).sum().item()
             val_n += label.size(0)

@@ -12,27 +12,29 @@ class DefaultConfig(object):
     列出所有的参数，只根据模型需要获取参数
     '''
     env = 'default'  # visdom环境
-    model = 'LSTM'  # 使用的模型，名字必须与models/__init__.py中的名字一致
+    model = 'RCNN'  # 使用的模型，名字必须与models/__init__.py中的名字一致
 
     # 数据集参数
-    # train_data_path = '/data/yujun/datasets/daguanbei_data/new_train_set.csv'
-    # val_data_path = '/data/yujun/datasets/daguanbei_data/val_set.csv'
-    # test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
+    train_data_path = '/data/yujun/datasets/daguanbei_data/new_train_set.csv'
+    val_data_path = '/data/yujun/datasets/daguanbei_data/val_set.csv'
+    test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
     # 在自己的PC上小数据集调试代码用
-    train_data_path = '~/git/dataset/val_set.csv'
-    test_data_path = '~/git/dataset/val_set.csv'
-    val_data_path = '~/git/dataset/val_set.csv'
-    embedding_path = '/home/captain/git/emb/word_100.txt'
+    # train_data_path = '~/git/dataset/val_set.csv'
+    # test_data_path = '~/git/dataset/val_set.csv'
+    # val_data_path = '~/git/dataset/val_set.csv'
+    # word_embedding_path = '/home/captain/git/emb/word_100.txt'
+    # art_embedding_path = '/home/captain/git/emb/article_100.txt'
 
-    # embedding_path = '/data/yujun/captain/emb/word_100.txt'  # 使用的预训练词向量
-
+    word_embedding_path = '/data/yujun/captain/emb/word_100.txt'  # 使用的预训练词向量
+    art_embedding_path = '/data/yujun/captain/emb/article_100.txt'  # 使用的预训练字符向量
     embedding_dim = 100  # number of embedding dimension
 
-    vocab_size = 10000  # 词库规模，配置中写的值没有意义，实际是预处理阶段获取
+    word_vocab_size = 10000  # 词库规模，配置中写的值没有意义，实际是预处理阶段获取
+    art_vocab_size = 10000  # 字符规模
     label_size = 19  # 分类类别数
     batch_size = 64
     max_text_len = 1000  # 之后会处理成变长的，这里的设置没有意义
-    text_type = 'word_seg'  # or 'article'
+    max_article_len = 5000
 
     # 训练参数
     # cuda = True
@@ -45,7 +47,7 @@ class DefaultConfig(object):
     epochs = 50
     save_dir = 'snapshot/'  # where to save the snapshot
     id = 't1'
-    device = 0
+    device = 1
 
     # 模型通用
     linear_hidden_size = 500  # 原来为2000，之后还需要修改，感觉数值有点大
