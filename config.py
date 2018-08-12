@@ -12,7 +12,7 @@ class DefaultConfig(object):
     列出所有的参数，只根据模型需要获取参数
     '''
     env = 'default'  # visdom环境
-    model = 'FastText'  # 使用的模型，名字必须与models/__init__.py中的名字一致
+    model = 'AttLSTM'  # 使用的模型，名字必须与models/__init__.py中的名字一致
 
     # 数据集参数
     # train_data_path = '/data/yujun/datasets/daguanbei_data/new_train_set.csv'
@@ -22,10 +22,10 @@ class DefaultConfig(object):
     # embedding_dim = 300  # number of embedding dimension
 
     # 在自己的PC上小数据集调试代码用
-    train_data_path = '~/git/dataset/val_set.csv'
-    test_data_path = '~/git/dataset/val_set.csv'
-    val_data_path = '~/git/dataset/val_set.csv'
-    embedding_path = '/home/captain/git/emb'  # 预训练词向量的位置
+    train_data_path = 'D:/git/dataset/val_set.csv'
+    test_data_path = 'D:/git/dataset/val_set.csv'
+    val_data_path = 'D:/git/dataset/val_set.csv'
+    embedding_path = 'D:/git/emb'  # 预训练词向量的位置
     embedding_dim = 100
 
     vocab_size = 10000  # 词库规模，配置中写的值没有意义，实际是预处理阶段获取
@@ -35,7 +35,6 @@ class DefaultConfig(object):
     text_type = 'word'  # or 'article'
 
     # 训练参数
-    # cuda = True
     lr1 = 1e-3  # learning rate
     lr2 = 0  # embedding层的学习率
     min_lr = 1e-5  # 当学习率低于这个值时，就退出训练
@@ -45,6 +44,7 @@ class DefaultConfig(object):
     epochs = 50
     save_dir = 'snapshot/'  # where to save the snapshot
     id = 't1'
+    cuda = True
     device = 0
 
     # 模型通用

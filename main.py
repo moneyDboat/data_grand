@@ -24,9 +24,12 @@ best_score = 0.0
 
 def main(**kwargs):
     args = DefaultConfig()
+    if not torch.cuda.is_available():
+        args.cuda = False
+        args.device = None
+
     train_iter, val_iter, args.vocab_size, vectors = util.load_data(args, args.text_type)
 
-    args.cuda = torch.cuda.is_available()
     args.print_config()
 
     global best_score
@@ -103,10 +106,14 @@ def main(**kwargs):
             torch.save(checkpoint, save_path)
             print('Best tmp model f1score: {}'.format(best_score))
         if f1score < best_score:
+            if lr1 < args.min_lr:
+                print('* training over, best f1 score: {}'.format(f1score))
+                break
             model.load_state_dict(torch.load(save_path)['state_dict'])
             lr1 *= 0.8
             lr2 = 2e-4 if lr2 == 0 else lr2 * 0.8
             optimizer = model.get_optimizer(lr1, lr2, args.weight_decay)
+            print('* load previous best model: {}'.format(best_score))
             print('* model lr:{}  emb lr:{}'.format(lr1, lr2))
 
 

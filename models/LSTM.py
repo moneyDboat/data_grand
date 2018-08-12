@@ -15,9 +15,10 @@ from config import DefaultConfig
 # 有两个做法有待实验验证
 # 1、kmax_pooling的使用，对所有RNN的输出做最大池化
 # 2、分类器选用两层全连接层+BN层，还是直接使用一层全连接层
+# 3、是否需要init_hidden
 
 def kmax_pooling(x, dim, k):
-    index = x.topk(k, dim=dim)[1].sort(dim=dim)[0] # torch.Tensor.topk()的输出有两项，后一项为索引
+    index = x.topk(k, dim=dim)[1].sort(dim=dim)[0]  # torch.Tensor.topk()的输出有两项，后一项为索引
     return x.gather(dim, index)
 
 
@@ -26,7 +27,7 @@ class LSTM(BasicModule):
         self.kmax_pooling = args.kmax_pooling
         super(LSTM, self).__init__()
 
-        #lstm
+        # LSTM
         self.embedding = nn.Embedding(args.vocab_size, args.embedding_dim)
         self.embedding.weight.data.copy_(vectors)
         self.bilstm = nn.LSTM(
