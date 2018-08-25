@@ -15,23 +15,23 @@ class DefaultConfig(object):
     model = 'LSTM'  # 使用的模型，名字必须与models/__init__.py中的名字一致
 
     # 数据集参数
-    # train_data_path = '/data/yujun/datasets/daguanbei_data/new_split/new_train_set.csv'
-    # val_data_path = '/data/yujun/datasets/daguanbei_data/new_split/val_set.csv'
-    # test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
-    # embedding_path = '/data/yujun/captain/emb'  # 使用的预训练词向量
-    # embedding_dim = 300  # number of embedding dimension
+    train_data_path = '/data/yujun/datasets/daguanbei_data/new_split/new_train_set.csv'
+    val_data_path = '/data/yujun/datasets/daguanbei_data/new_split/val_set.csv'
+    test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
+    embedding_path = '/data/yujun/captain/emb'  # 使用的预训练词向量
+    embedding_dim = 300  # number of embedding dimension
 
     # 在自己的PC上小数据集调试代码用
-    train_data_path = 'D:/git/dataset/val_set.csv'
-    test_data_path = 'D:/git/dataset/val_set.csv'
-    val_data_path = 'D:/git/dataset/val_set.csv'
-    embedding_path = 'D:/git/emb'  # 预训练词向量的位置
-    embedding_dim = 100
+    # train_data_path = 'D:/git/dataset/val_set.csv'
+    # test_data_path = 'D:/git/dataset/val_set.csv'
+    # val_data_path = 'D:/git/dataset/val_set.csv'
+    # embedding_path = 'D:/git/emb'  # 预训练词向量的位置
+    # embedding_dim = 100
 
-    batch_size = 16
+    batch_size = 64
     vocab_size = 10000  # 词库规模，配置中写的值没有意义，实际是预处理阶段获取
     label_size = 19  # 分类类别数
-    max_text_len = 1000  # 之后会处理成变长的，这里的设置没有意义
+    max_text_len = 2000  # 之后会处理成变长的，这里的设置没有意义
     text_type = 'word'  # or 'article'
 
     # 训练参数
@@ -45,7 +45,7 @@ class DefaultConfig(object):
     save_dir = 'snapshot/'  # where to save the snapshot
     id = 't1'
     cuda = True
-    device = 7
+    device = 0
 
     # 模型通用
     linear_hidden_size = 500  # 原来为2000，之后还需要修改，感觉数值有点大
