@@ -11,3 +11,4 @@ from .LSTM import LSTM
 from .FastText import FastText
 from .RCNN import RCNN
 from .AttLSTM import AttLSTM
+from .GRU import GRU
