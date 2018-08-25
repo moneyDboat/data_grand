@@ -40,7 +40,7 @@ class GrandDataset(data.Dataset):
 
 def load_data(opt, text_type):
     # 不设置fix_length
-    TEXT = data.Field(sequential=True, fix_length=1000)  # 词或者字符
+    TEXT = data.Field(sequential=True, fix_length=None)  # 词或者字符
     LABEL = data.Field(sequential=False, use_vocab=False)
 
     # load data
@@ -69,8 +69,9 @@ def load_data(opt, text_type):
 
     # 构建Iterator
     # 在 test_iter , sort一定要设置成 False, 要不然会被 torchtext 搞乱样本顺序
-    train_iter = data.Iterator(dataset=train, batch_size=opt.batch_size, train=True, repeat=False, device=opt.device)
-    val_iter = data.Iterator(dataset=val, batch_size=opt.batch_size, train=False, repeat=False, sort=False,
+    train_iter = data.Iterator(dataset=train, batch_size=opt.batch_size, sort=False, train=False, repeat=False,
+                               device=opt.device)
+    val_iter = data.Iterator(dataset=val, batch_size=opt.batch_size, sort=True, train=False, repeat=False,
                              device=opt.device)
     # test_iter = data.Iterator(dataset=test, batch_size=opt.batch_size, train=False, sort=False, device=opt.device)
 

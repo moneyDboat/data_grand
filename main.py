@@ -34,7 +34,6 @@ def main(**kwargs):
 
     global best_score
 
-    args.kernel_sizes = [int(k) for k in args.kernel_sizes.split(',')]
     # 模型保存位置
     if not os.path.exists(args.save_dir):
         os.mkdir(args.save_dir)
@@ -42,11 +41,6 @@ def main(**kwargs):
 
     # model
     model = getattr(models, args.model)(args, vectors)
-
-    # fix the parameters of embedding layers
-    # for layer, param in enumerate(model.parameters()):
-    #    if layer == 0:
-    #        param.requires_grad = False
 
     if args.cuda:
         torch.cuda.set_device(args.device)
@@ -78,6 +72,7 @@ def main(**kwargs):
             loss = criterion(pred, label)
             loss.backward()
             # gradient clipping 梯度裁剪
+            # 添加BN之后就没必要添加梯度裁剪
             # total_norm = clip_grad_norm_(model.parameters(), 10)
             # if total_norm > 10:
             #     print("clipping gradient: {} with coef {}".format(total_norm, 10 / total_norm))
@@ -101,13 +96,14 @@ def main(**kwargs):
                 'state_dict': model.state_dict(),
                 'f1score': f1score,
                 'epoch': i + 1,
-                'config': args
+                'config': args,
+                'optimizer': optimizer
             }
             torch.save(checkpoint, save_path)
             print('Best tmp model f1score: {}'.format(best_score))
         if f1score < best_score:
             if lr1 < args.min_lr:
-                print('* training over, best f1 score: {}'.format(f1score))
+                print('* training over, best f1 score: {}'.format(best_score))
                 break
             model.load_state_dict(torch.load(save_path)['state_dict'])
             lr1 *= 0.8

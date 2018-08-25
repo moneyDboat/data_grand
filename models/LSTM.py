@@ -23,29 +23,29 @@ def kmax_pooling(x, dim, k):
 
 
 class LSTM(BasicModule):
-    def __init__(self, args, vectors):
-        self.kmax_pooling = args.kmax_pooling
+    def __init__(self, config, vectors):
+        self.kmax_pooling = config.kmax_pooling
         super(LSTM, self).__init__()
 
         # LSTM
-        self.embedding = nn.Embedding(args.vocab_size, args.embedding_dim)
+        self.embedding = nn.Embedding(config.vocab_size, config.embedding_dim)
         self.embedding.weight.data.copy_(vectors)
         self.bilstm = nn.LSTM(
-            input_size=args.embedding_dim,
-            hidden_size=args.hidden_dim,
-            num_layers=args.lstm_layers,
+            input_size=config.embedding_dim,
+            hidden_size=config.hidden_dim,
+            num_layers=config.lstm_layers,
             batch_first=False,
-            dropout=args.lstm_dropout,
+            dropout=config.lstm_dropout,
             bidirectional=True)
 
         # self.fc = nn.Linear(args.hidden_dim * 2 * 2, args.label_size)
         # 两层全连接层，中间添加批标准化层
         # 全连接层隐藏元个数需要再做修改
         self.fc = nn.Sequential(
-            nn.Linear(self.kmax_pooling * (args.hidden_dim * 2), args.linear_hidden_size),
-            nn.BatchNorm1d(args.linear_hidden_size),
+            nn.Linear(self.kmax_pooling * (config.hidden_dim * 2), config.linear_hidden_size),
+            nn.BatchNorm1d(config.linear_hidden_size),
             nn.ReLU(inplace=True),
-            nn.Linear(args.linear_hidden_size, args.label_size)
+            nn.Linear(config.linear_hidden_size, config.label_size)
         )
 
     # 对LSTM所有隐含层的输出做kmax pooling
