@@ -5,6 +5,7 @@
 @time    : 18-7-11 上午12:33
 @ide     : PyCharm  
 """
+from word2vec import word2vec
 
 
 class DefaultConfig(object):
@@ -13,6 +14,12 @@ class DefaultConfig(object):
     '''
     env = 'default'  # visdom环境
     model = 'LSTM'  # 使用的模型，名字必须与models/__init__.py中的名字一致
+    model_path = None  # 如果有就加载
+    result_path = ''
+    save_dir = 'snapshot/'  # where to save the snapshot
+    id = 't1'
+    device = 0
+    boost = False  ## 是否使用adboost
 
     # 数据集参数
     train_data_path = '/data/yujun/datasets/daguanbei_data/new_split/new_train_set.csv'
@@ -38,17 +45,14 @@ class DefaultConfig(object):
     lr1 = 1e-3  # learning rate
     lr2 = 0  # embedding层的学习率
     min_lr = 1e-5  # 当学习率低于这个值时，就退出训练
-    # lr_decay = 0.8 # 当一个epoch的损失开始上升时，lr ＝ lr*lr_decay
-    # decay_every = 100 #每多少个batch  查看val acc，并修改学习率
+    lr_decay = 0.5  # 当一个epoch的损失开始上升时，lr ＝ lr*lr_decay
+    decay_every = 10000  # 每多少个batch  查看val acc，并修改学习率
     weight_decay = 0  # 2e-5 # 权重衰减
-    epochs = 50
-    save_dir = 'snapshot/'  # where to save the snapshot
-    id = 't1'
+    max_epochs = 50
     cuda = True
-    device = 0
 
     # 模型通用
-    linear_hidden_size = 500  # 原来为2000，之后还需要修改，感觉数值有点大
+    linear_hidden_size = 100  # 原来为2000(500)，之后还需要修改，感觉数值有点大
 
     # TextCNN
     kernel_num = 200  # number of each kind of kernel

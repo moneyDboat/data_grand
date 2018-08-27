@@ -24,8 +24,9 @@ def kmax_pooling(x, dim, k):
 
 class LSTM(BasicModule):
     def __init__(self, config, vectors):
-        self.kmax_pooling = config.kmax_pooling
         super(LSTM, self).__init__()
+        self.config = config
+        self.kmax_pooling = config.kmax_pooling
 
         # LSTM
         self.embedding = nn.Embedding(config.vocab_size, config.embedding_dim)

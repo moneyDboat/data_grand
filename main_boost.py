@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 """
-@Author  : captain
-@time    : 18-7-10 下午8:42
-@ide     : PyCharm  
+# @Author  : captain
+# @Time    : 2018/8/27 19:08
+# @Ide     : PyCharm
 """
 
 import torch
@@ -47,8 +47,12 @@ def main(**kwargs):
         torch.cuda.set_device(args.device)
         model.cuda()
 
+    loss_weight = torch.ones(args.label_size)
+    if args.boost:
+        pass
     # 目标函数和优化器
-    criterion = F.cross_entropy
+    weight = loss_weight + 1 - loss_weight.mean()  # 加一是为了避免出现负值
+    criterion = F.cross_entropy(weight=weight)
     lr1, lr2 = args.lr1, args.lr2
     optimizer = model.get_optimizer(lr1, lr2, args.weight_decay)
 

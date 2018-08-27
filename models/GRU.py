@@ -10,6 +10,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from .BasicModule import BasicModule
 from config import DefaultConfig
+import word2vec
+word2vec.word2vec()
 
 
 def kmax_pooling(x, dim, k):
@@ -49,8 +51,8 @@ class GRU(BasicModule):
         out = self.bigru(embed)[0].permute(1, 2, 0)  # batch * hidden * seq
         pooling = kmax_pooling(out, 2, self.kmax_pooling)  # batch * hidden * kmax
 
+        logits = self.fc(flatten)
         # word+article
         flatten = pooling.view(pooling.size(0), -1)
-        logits = self.fc(flatten)
 
         return logits
