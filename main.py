@@ -28,7 +28,7 @@ def main(**kwargs):
         args.cuda = False
         args.device = None
 
-    train_iter, val_iter, args.vocab_size, vectors = util.load_data(args, args.text_type)
+    train_iter, val_iter, test_iter, args.vocab_size, vectors = util.load_data(args, args.text_type)
 
     args.print_config()
 

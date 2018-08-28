@@ -73,6 +73,6 @@ def load_data(opt, text_type):
                                device=opt.device)
     val_iter = data.Iterator(dataset=val, batch_size=opt.batch_size, sort=True, train=False, repeat=False,
                              device=opt.device)
-    # test_iter = data.Iterator(dataset=test, batch_size=opt.batch_size, train=False, sort=False, device=opt.device)
+    test_iter = data.Iterator(dataset=test, batch_size=opt.batch_size, train=False, sort=False, device=opt.device)
 
-    return train_iter, val_iter, len(TEXT.vocab), TEXT.vocab.vectors
+    return train_iter, val_iter, test_iter, len(TEXT.vocab), TEXT.vocab.vectors
