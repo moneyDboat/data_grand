@@ -28,6 +28,7 @@ class LSTM(BasicModule):
         self.config = config
         self.kmax_pooling = config.kmax_pooling
 
+
         # LSTM
         self.embedding = nn.Embedding(config.vocab_size, config.embedding_dim)
         self.embedding.weight.data.copy_(vectors)

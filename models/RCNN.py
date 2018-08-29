@@ -20,8 +20,9 @@ def kmax_pooling(x, dim, k):
 
 class RCNN(BasicModule):
     def __init__(self, args, vectors):
-        self.kmax_k = args.kmax_pooling
         super(RCNN, self).__init__()
+        self.kmax_k = args.kmax_pooling
+        self.config = args
 
         #
         self.embedding = nn.Embedding(args.vocab_size, args.embedding_dim)
@@ -61,8 +62,3 @@ class RCNN(BasicModule):
         flatten = conv_out.view(conv_out.size(0), -1)
         logits = self.fc(flatten)
         return logits
-
-
-
-
-

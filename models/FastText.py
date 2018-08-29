@@ -14,17 +14,18 @@ import numpy as np
 
 
 class FastText(BasicModule):
-    def __init__(self, opt, vectors):
+    def __init__(self, config, vectors):
         super(FastText, self).__init__()
+        self.config = config
 
-        self.embedding = nn.Embedding(opt.vocab_size, opt.embedding_dim)
+        self.embedding = nn.Embedding(config.vocab_size, config.embedding_dim)
         self.embedding.weight.data.copy_(vectors)
 
         self.fc = nn.Sequential(
-            nn.Linear(opt.embedding_dim, opt.linear_hidden_size),
-            nn.BatchNorm1d(opt.linear_hidden_size),
+            nn.Linear(config.embedding_dim, config.linear_hidden_size),
+            nn.BatchNorm1d(config.linear_hidden_size),
             nn.ReLU(inplace=True),
-            nn.Linear(opt.linear_hidden_size, opt.label_size)
+            nn.Linear(config.linear_hidden_size, config.label_size)
         )
 
     def forward(self, sentence):
