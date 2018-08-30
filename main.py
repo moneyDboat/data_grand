@@ -99,7 +99,7 @@ def main(**kwargs):
         if f1score < best_score:
             model.load_state_dict(torch.load(save_path)['state_dict'])
             lr1 *= args.lr_decay
-            lr2 = 2e-4 if lr2 == 0 else lr2 * args.lr_decay
+            lr2 = 2e-4 if lr2 == 0 else lr2 * 0.8
             optimizer = model.get_optimizer(lr1, lr2, 0)
             print('* load previous best model: {}'.format(best_score))
             print('* model lr:{}  emb lr:{}'.format(lr1, lr2))

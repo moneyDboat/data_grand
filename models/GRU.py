@@ -11,7 +11,6 @@ import torch.nn.functional as F
 from .BasicModule import BasicModule
 from config import DefaultConfig
 import word2vec
-word2vec.word2vec()
 
 
 def kmax_pooling(x, dim, k):
