@@ -43,7 +43,7 @@ def tune(model_path=None, device=0):
     model = getattr(models, config.model)(config, vectors)
     model.load_state_dict(saved_model['state_dict'])
     print(model)
-    best_score = saved_model['best_score']
+    best_score = config.best_score
     print('Load model from {}!'.format(config.model_path))
     print('Tmp best f1 score: {}'.format(best_score))
 

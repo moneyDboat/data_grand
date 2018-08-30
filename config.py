@@ -12,11 +12,13 @@ class DefaultConfig(object):
     列出所有的参数，只根据模型需要获取参数
     '''
     env = 'default'  # visdom环境
+    seed = 7  # 设置随机数种子
+    best_score = 0
     model = 'LSTM'  # 使用的模型，名字必须与models/__init__.py中的名字一致
     model_path = None  # 如果有就加载
     result_path = ''
     save_dir = 'snapshot/'  # where to save the snapshot
-    id = 't1'
+    id = 'default'
     device = 0
     boost = False  ## 是否使用adboost
     finetune = False  ## 是否对训练完成的模型进行finetune
@@ -53,7 +55,7 @@ class DefaultConfig(object):
     cuda = True
 
     # 模型通用
-    linear_hidden_size = 500  # 原来为2000(500)，之后还需要修改，感觉数值有点大
+    linear_hidden_size = 100  # 原来为2000(500)，之后还需要修改，感觉数值有点大
 
     # TextCNN
     kernel_num = 200  # number of each kind of kernel
