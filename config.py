@@ -46,7 +46,7 @@ class DefaultConfig(object):
     lr1 = 1e-3  # learning rate
     lr2 = 0  # embedding层的学习率
     min_lr = 1e-5  # 当学习率低于这个nvi值时，就退出训练
-    lr_decay = 0.5  # 当一个epoch的损失开始上升时，lr ＝ lr*lr_decay
+    lr_decay = 0.8  # 当一个epoch的损失开始上升时，lr ＝ lr*lr_decay
     decay_every = 10000  # 每多少个batch  查看val acc，并修改学习率
     weight_decay = 0  # 2e-5 # 权重衰减
     max_epochs = 50

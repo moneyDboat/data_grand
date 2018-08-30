@@ -15,10 +15,7 @@ from config import DefaultConfig
 import pandas as pd
 import os
 import fire
-import datetime
-from models.TextCNN import TextCNN
 from sklearn import metrics
-from torch.nn.utils import clip_grad_norm_
 import numpy as np
 
 best_score = 0.0
@@ -32,27 +29,15 @@ def main(**kwargs):
         args.cuda = False
         args.device = None
 
-    train_iter, val_iter, test_iter, args.vocab_size, vectors = util.load_data(args, args.text_type)
+    train_iter, val_iter, test_iter, args.vocab_size, vectors = util.load_data(args)
 
     args.print_config()
 
     global best_score
 
-    # model
-    if args.model_path and args.finetune:
-        # 加载模型
-        saved_model = torch.load(args.model_path)
-        args = saved_model['config']
-        args.lr1 = 5e-5
-        args.lr2 = 5e-5
-        args.max_epochs = 10
-        model = getattr(models, args.model)(args, vectors)
-        model.load_state_dict(saved_model['state_dict'])
-        best_score = saved_model['best_score']
-        print('Load model from {}!'.format(args.model_path))
-    else:
-        # 若无，则新建立模型
-        model = getattr(models, args.model)(args, vectors)
+    # init model
+    model = getattr(models, args.model)(args, vectors)
+    print(model)
 
     # 模型保存位置
     if not os.path.exists(args.save_dir):
@@ -107,17 +92,14 @@ def main(**kwargs):
             best_score = f1score
             checkpoint = {
                 'state_dict': model.state_dict(),
-                # 'f1score': f1score,
-                # 'epoch': i + 1,
                 'config': args
-                # 'optimizer': optimizer
             }
             torch.save(checkpoint, save_path)
             print('Best tmp model f1score: {}'.format(best_score))
         if f1score < best_score:
             model.load_state_dict(torch.load(save_path)['state_dict'])
             lr1 *= args.lr_decay
-            lr2 = 2e-4 if lr2 == 0 else lr2 * 0.5
+            lr2 = 2e-4 if lr2 == 0 else lr2 * args.lr_decay
             optimizer = model.get_optimizer(lr1, lr2, 0)
             print('* load previous best model: {}'.format(best_score))
             print('* model lr:{}  emb lr:{}'.format(lr1, lr2))
@@ -126,21 +108,57 @@ def main(**kwargs):
                 break
 
     # 保存训练最终的模型
+    args.best_score = best_score
     final_model = {
         'state_dict': model.state_dict(),
-        'config': args,
-        'best_score': best_score
+        'config': args
     }
     best_model_path = os.path.join(args.save_dir, '{}_{}_{}.pth'.format(args.model, args.text_type, best_score))
     torch.save(final_model, best_model_path)
     print('Best Final Model saved in {}'.format(best_model_path))
 
-    # 在测试集上运行模型并提交结果
-    args.best_score = best_score
-    test(model, test_iter, args)
+    # 在测试集上运行模型并生成概率结果和提交结果
+    if not os.path.exists('result/'):
+        os.mkdir('result/')
+    probs, test_pred = test(model, test_iter, args)
+    result_path = 'result/' + '{}_{}_{}'.format(args.model, args.id, args.best_score)
+    np.save('{}.npy'.format(result_path), probs)
+    print('Prob result {}.npy saved!'.format(result_path))
+
+    test_pred[['id', 'class']].to_csv('{}.csv'.format(result_path), index=None)
+    print('Result {}.csv saved!'.format(result_path))
 
     t2 = time.time()
     print('time use: {}'.format(t2 - t1))
+
+
+def test(model, test_data, args):
+    # 生成测试提交数据csv
+    # 将模型设为验证模式
+    model.eval()
+
+    result = np.zeros((0,))
+    probs_list = []
+    with torch.no_grad():
+        for batch in test_data:
+            text = batch.text
+            if args.cuda:
+                text = text.cuda()
+            outputs = model(text)
+            probs = F.softmax(outputs, dim=1)
+            probs_list.append(probs.cpu().numpy())
+            pred = outputs.max(1)[1]
+            result = np.hstack((result, pred.cpu().numpy()))
+
+    # 生成概率文件npy
+    prob_cat = np.concatenate(probs_list, axis=0)
+
+    test = pd.read_csv('/data/yujun/datasets/daguanbei_data/test_set.csv')
+    test_id = test['id'].copy()
+    test_pred = pd.DataFrame({'id': test_id, 'class': result})
+    test_pred['class'] = (test_pred['class'] + 1).astype(int)
+
+    return prob_cat, test_pred
 
 
 def val(model, dataset, args):
@@ -169,30 +187,6 @@ def val(model, dataset, args):
     f1score = np.mean(metrics.f1_score(predict, gt, average=None))
     print('* Test Acc: {:.3f}%({}/{}), F1 Score: {}'.format(acc, acc_n, val_n, f1score))
     return f1score
-
-
-def test(model, test_data, args):
-    # 生成测试提交数据csv
-    # 将模型设为验证模式
-    model.eval()
-
-    result = np.zeros((0,))
-    with torch.no_grad():
-        for batch in test_data:
-            text = batch.text
-            if args.cuda:
-                text = text.cuda()
-            outputs = model(text)
-            pred = outputs.max(1)[1]
-            result = np.hstack((result, pred.cpu().numpy()))
-
-    test = pd.read_csv('/data/yujun/datasets/daguanbei_data/test_set.csv')
-    test_id = test['id'].copy()
-    test_pred = pd.DataFrame({'id': test_id, 'class': result})
-    test_pred['class'] = (test_pred['class'] + 1).astype(int)
-    result_path = 'result/' + '{}_{}_{}.csv'.format(args.model, args.id, args.best_score)
-    test_pred[['id', 'class']].to_csv(result_path, index=None)
-    print('Result {} saved!'.format(result_path))
 
 
 if __name__ == '__main__':
