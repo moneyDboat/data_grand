@@ -14,12 +14,13 @@ import numpy as np
 
 
 class FastText(BasicModule):
-    def __init__(self, config, vectors):
+    def __init__(self, config, vectors=None):
         super(FastText, self).__init__()
         self.config = config
 
         self.embedding = nn.Embedding(config.vocab_size, config.embedding_dim)
-        self.embedding.weight.data.copy_(vectors)
+        if vectors is not None:
+            self.embedding.weight.data.copy_(vectors)
 
         self.fc = nn.Sequential(
             nn.Linear(config.embedding_dim, config.linear_hidden_size),

@@ -19,14 +19,15 @@ def kmax_pooling(x, dim, k):
 
 
 class RCNN(BasicModule):
-    def __init__(self, args, vectors):
+    def __init__(self, args, vectors=None):
         super(RCNN, self).__init__()
         self.kmax_k = args.kmax_pooling
         self.config = args
 
         #
         self.embedding = nn.Embedding(args.vocab_size, args.embedding_dim)
-        self.embedding.weight.data.copy_(vectors)
+        if vectors is not None:
+            self.embedding.weight.data.copy_(vectors)
         self.lstm = nn.LSTM(
             input_size=args.embedding_dim,
             hidden_size=args.hidden_dim,

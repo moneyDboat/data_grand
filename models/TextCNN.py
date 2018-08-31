@@ -16,13 +16,14 @@ kernal_sizes = [1, 2, 3, 4, 5]
 
 
 class TextCNN(BasicModule):
-    def __init__(self, opt, vectors):
+    def __init__(self, opt, vectors=None):
         super(TextCNN, self).__init__()
 
         '''Embedding Layer'''
         # 使用预训练的词向量
         self.embedding = nn.Embedding(opt.vocab_size, opt.embedding_dim)
-        self.embedding.weight.data.copy_(vectors)
+        if vectors is not None:
+            self.embedding.weight.data.copy_(vectors)
 
         convs = [
             nn.Sequential(

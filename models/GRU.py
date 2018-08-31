@@ -19,14 +19,15 @@ def kmax_pooling(x, dim, k):
 
 
 class GRU(BasicModule):
-    def __init__(self, config, vectors):
+    def __init__(self, config, vectors=None):
         super(GRU, self).__init__()
         self.opt = config
         self.kmax_pooling = config.kmax_pooling
 
         # GRU
         self.embedding = nn.Embedding(config.vocab_size, config.embedding_dim)
-        self.embedding.weight.data.copy_(vectors)
+        if vectors is not None:
+            self.embedding.weight.data.copy_(vectors)
         self.bigru = nn.GRU(
             input_size=config.embedding_dim,
             hidden_size=config.hidden_dim,
