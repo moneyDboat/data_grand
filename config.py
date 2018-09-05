@@ -12,7 +12,7 @@ class DefaultConfig(object):
     列出所有的参数，只根据模型需要获取参数
     '''
     env = 'default'  # visdom环境
-    seed = 7  # 设置随机数种子
+    seed = 777  # 设置随机数种子
     best_score = 0
     model = 'LSTM'  # 使用的模型，名字必须与models/__init__.py中的名字一致
     model_path = None  # 如果有就加载
@@ -21,7 +21,9 @@ class DefaultConfig(object):
     id = 'default'
     device = 0
     boost = False  ## 是否使用adboost
+    bo_layers = 5  ## boost的层数
     finetune = False  ## 是否对训练完成的模型进行finetune
+    aug = False  ## 是否进行数据增强
 
     # 数据集参数
     data_path = '/data/yujun/captain/datasets/'
@@ -69,6 +71,7 @@ class DefaultConfig(object):
     kmax_pooling = 2
 
     # RCNN
+    rcnn_kernel = 512
 
     def parse(self, kwargs):
         '''

@@ -12,6 +12,7 @@ from config import DefaultConfig
 import util
 import fire
 import numpy as np
+import torch.nn.functional as F
 import pandas as pd
 
 
@@ -44,15 +45,18 @@ def main(**kwargs):
         torch.cuda.set_device(args.device)
         model.cuda()
 
-    result = infer(model, test_iter, config)
+    probs = infer(model, test_iter, config)
+    result_path = 'result/' + '{}_{}_{}'.format(args.model, args.id, args.best_score)
+    np.save('{}.npy'.format(result_path), probs)
+    print('Prob result {}.npy saved!'.format(result_path))
     # np.save('{}.npy'.format(args.model), result)
 
-    test = pd.read_csv('/data/yujun/datasets/daguanbei_data/test_set.csv')
-    test_id = test['id'].copy()
-
-    test_pred = pd.DataFrame({'id': test_id, 'class': result})
-    test_pred['class'] = (test_pred['class'] + 1).astype(int)
-    test_pred[['id', 'class']].to_csv('{}.csv'.format(args.model), index=None)
+    # test = pd.read_csv('/data/yujun/datasets/daguanbei_data/test_set.csv')
+    # test_id = test['id'].copy()
+    #
+    # test_pred = pd.DataFrame({'id': test_id, 'class': result})
+    # test_pred['class'] = (test_pred['class'] + 1).astype(int)
+    # test_pred[['id', 'class']].to_csv('{}.csv'.format(args.model), index=None)
 
 
 def infer(model, test_iter, opt):
@@ -60,16 +64,18 @@ def infer(model, test_iter, opt):
     model.eval()
 
     result = np.zeros((0,))
+    probs_list = []
     with torch.no_grad():
         for batch in test_iter:
             text = batch.text
             if opt.cuda:
                 text = text.cuda()
             outputs = model(text)
-            pred = outputs.max(1)[1]
-            # probs = F.softmax(outputs, dim=1)
-            result = np.hstack((result, pred.cpu().numpy()))
-    return result
+            probs = F.softmax(outputs, dim=1)
+            probs_list.append(probs.cpu().numpy())
+
+    prob_cat = np.concatenate(probs_list, axis=0)
+    return prob_cat
 
 
 if __name__ == '__main__':

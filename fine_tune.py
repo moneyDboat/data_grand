@@ -40,7 +40,7 @@ def tune(model_path=None, device=0):
     train_iter, val_iter, test_iter, config.vocab_size, vectors = util.load_data(config)
     config.print_config()
 
-    model = getattr(models, config.model)(config, vectors)
+    model = getattr(models, config.model)(config, None)
     model.load_state_dict(saved_model['state_dict'])
     print(model)
     best_score = config.best_score
@@ -49,6 +49,7 @@ def tune(model_path=None, device=0):
 
     # 模型保存位置
     save_path = os.path.join(config.save_dir, 'tune_{}_{}.pth'.format(config.model, config.id))
+    torch.save(model, save_path)
 
     if config.cuda:
         torch.cuda.set_device(config.device)
@@ -96,14 +97,11 @@ def tune(model_path=None, device=0):
         f1score = val(model, val_iter, config)
         if f1score > best_score:
             best_score = f1score
-            checkpoint = {
-                'state_dict': model.state_dict(),
-                'config': config
-            }
-            torch.save(checkpoint, save_path)
+            torch.save(model, save_path)
             print('Best tmp model f1score: {}'.format(best_score))
         if f1score < best_score:
-            model.load_state_dict(torch.load(save_path)['state_dict'])
+            model = torch.load(save_path)
+            model = model.cuda()
             lr1 *= config.lr_decay
             lr2 *= 0.8
             optimizer = model.get_optimizer(lr1, lr2, 0)

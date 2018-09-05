@@ -28,6 +28,7 @@ def main(**kwargs):
     if not torch.cuda.is_available():
         args.cuda = False
         args.device = None
+        torch.manual_seed(args.seed)  # set random seed for cpu
 
     train_iter, val_iter, test_iter, args.vocab_size, vectors = util.load_data(args)
 
@@ -46,6 +47,7 @@ def main(**kwargs):
 
     if args.cuda:
         torch.cuda.set_device(args.device)
+        torch.cuda.manual_seed(args.seed)  # set random seed for gpu
         model.cuda()
 
     # 目标函数和优化器
