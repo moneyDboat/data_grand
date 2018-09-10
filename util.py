@@ -73,6 +73,9 @@ def load_data(opt):
     train_path = opt.data_path + opt.text_type + '/train_set.csv'
     val_path = opt.data_path + opt.text_type + '/val_set.csv'
     test_path = opt.data_path + opt.text_type + '/test_set.csv'
+    train_path = 'D:/git/dataset/val_set.csv'
+    test_path = 'D:/git/dataset/val_set.csv'
+    val_path = 'D:/git/dataset/val_set.csv'
 
     # aug for data augmentation
     if opt.aug:

@@ -18,7 +18,6 @@ import fire
 from sklearn import metrics
 import numpy as np
 
-best_score = 0.0
 t1 = time.time()
 
 
@@ -26,7 +25,7 @@ def main(**kwargs):
     args = DefaultConfig()
     args.parse(kwargs)
     # boost模型
-    args.max_epochs = 1
+    args.max_epochs = 5
 
     if not torch.cuda.is_available():
         args.cuda = False
@@ -37,12 +36,6 @@ def main(**kwargs):
 
     args.print_config()
 
-    global best_score
-
-    # init model
-    # model = getattr(models, args.model)(args, vectors)
-    # print(model)
-
     # 模型保存位置
     if not os.path.exists(args.save_dir):
         os.mkdir(args.save_dir)
@@ -51,29 +44,26 @@ def main(**kwargs):
     if args.cuda:
         torch.cuda.set_device(args.device)
         torch.cuda.manual_seed(args.seed)  # set random seed for gpu
-        # model.cuda()
-
-    # 目标函数和优化器
-    criterion = F.cross_entropy
-    #lr1, lr2 = args.lr1, args.lr2
-    #optimizer = model.get_optimizer(lr1, lr2, args.weight_decay)
 
     for lay_i in range(args.bo_layers):
+        print('-------------- lay {} ---------------'.format(lay_i))
         model = getattr(models, args.model)(args, vectors)
         model = model.cuda()
+        print(model)
+        best_score = 0.0
+
+        # 目标函数和优化器
+        criterion = F.cross_entropy
         lr1 = args.lr1
         lr2 = args.lr2
         optimizer = model.get_optimizer(lr1, lr2, args.weight_decay)
-        print(model)
+
         if lay_i != 0:
             # 加载上一层模型的loss weight
             saved_model = torch.load(args.model_path)
             loss_weight = saved_model['loss_weight']
-            print(loss_weight)
+            print(list(enumerate(loss_weight)))
             loss_weight = loss_weight.cuda()
-            # criterion = F.cross_entropy(weight=loss_weight + 1 - loss_weight.mean())  # 加1是为了避免出现负值
-            # 新的优化器
-            optimizer = model.get_optimizer(args.lr1, args.lr2, args.weight_decay)
 
         for i in range(args.max_epochs):
             total_loss = 0.0
@@ -94,7 +84,7 @@ def main(**kwargs):
                 optimizer.zero_grad()
                 pred = model(text)
                 if lay_i != 0:
-                    loss = criterion(pred, label, weight=loss_weight+1-loss_weight.mean())
+                    loss = criterion(pred, label, weight=loss_weight + 1 - loss_weight.mean())
                 else:
                     loss = criterion(pred, label)
                 loss.backward()
@@ -112,7 +102,7 @@ def main(**kwargs):
                     total_loss = 0.0
 
             # 计算再验证集上的分数，并相应调整学习率
-            f1score, loss_weight = val(model, val_iter, args)
+            f1score, tmp_loss_weight = val(model, val_iter, args)
             if f1score > best_score:
                 best_score = f1score
                 checkpoint = {
@@ -134,6 +124,7 @@ def main(**kwargs):
 
         # 保存训练最终的模型
         # 保存当前层的loss weight
+        loss_weight = tmp_loss_weight
         args.best_score = best_score
         final_model = {
             'state_dict': model.state_dict(),

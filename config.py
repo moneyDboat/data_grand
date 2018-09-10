@@ -14,7 +14,7 @@ class DefaultConfig(object):
     env = 'default'  # visdom环境
     seed = 777  # 设置随机数种子
     best_score = 0
-    model = 'LSTM'  # 使用的模型，名字必须与models/__init__.py中的名字一致
+    model = 'InCNN'  # 使用的模型，名字必须与models/__init__.py中的名字一致
     model_path = None  # 如果有就加载
     result_path = ''
     save_dir = 'snapshot/'  # where to save the snapshot
@@ -31,15 +31,15 @@ class DefaultConfig(object):
     # train_data_path = '/data/yujun/datasets/daguanbei_data/new_split/new_train_set.csv'
     # val_data_path = '/data/yujun/datasets/daguanbei_data/new_split/val_set.csv'
     # test_data_path = '/data/yujun/datasets/daguanbei_data/test_set.csv'
-    embedding_path = '/data/yujun/captain/emb'  # 使用的预训练词向量
-    embedding_dim = 300  # number of embedding dimension
+    # embedding_path = '/data/yujun/captain/emb'  # 使用的预训练词向量
+    # embedding_dim = 300  # number of embedding dimension
 
     # 在自己的PC上小数据集调试代码用
     # train_data_path = 'D:/git/dataset/val_set.csv'
     # test_data_path = 'D:/git/dataset/val_set.csv'
     # val_data_path = 'D:/git/dataset/val_set.csv'
-    # embedding_path = 'D:/git/emb'  # 预训练词向量的位置
-    # embedding_dim = 100
+    embedding_path = 'D:/git/emb'  # 预训练词向量的位置
+    embedding_dim = 100
 
     batch_size = 64
     vocab_size = 10000  # 词库规模，配置中写的值没有意义，实际是预处理阶段获取
