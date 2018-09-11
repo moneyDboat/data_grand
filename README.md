@@ -1,5 +1,8 @@
 # 2018“达观杯”文本智能处理挑战赛
-## Top 10 解决方案
+## Top 10 “万里阳光号”解决方案
+比赛详情见 [达观杯文本智能处理挑战赛](http://www.dcjingsai.com/common/cmpt/%E2%80%9C%E8%BE%BE%E8%A7%82%E6%9D%AF%E2%80%9D%E6%96%87%E6%9C%AC%E6%99%BA%E8%83%BD%E5%A4%84%E7%90%86%E6%8C%91%E6%88%98%E8%B5%9B_%E7%AB%9E%E8%B5%9B%E4%BF%A1%E6%81%AF.html)  
+最终排名见 [排行榜](
+http://www.dcjingsai.com/common/cmpt/%E2%80%9C%E8%BE%BE%E8%A7%82%E6%9D%AF%E2%80%9D%E6%96%87%E6%9C%AC%E6%99%BA%E8%83%BD%E5%A4%84%E7%90%86%E6%8C%91%E6%88%98%E8%B5%9B_%E6%8E%92%E8%A1%8C%E6%A6%9C.html)
 ### 环境配置
 代码基于Pytorch，版本为0.4.1，Python版本为3.6。需安装：
 - pytorch
