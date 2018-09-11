@@ -9,7 +9,7 @@
 import torch
 import models
 from config import DefaultConfig
-import util
+import data
 import fire
 import numpy as np
 import torch.nn.functional as F

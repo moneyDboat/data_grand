@@ -10,7 +10,7 @@ import torch
 import time
 import torch.nn.functional as F
 import models
-import util
+import data
 from config import DefaultConfig
 import pandas as pd
 import os

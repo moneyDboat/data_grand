@@ -8,7 +8,7 @@
 
 import torch
 import models
-import util
+import data
 import numpy as np
 import torch.nn.functional as F
 import pandas as pd

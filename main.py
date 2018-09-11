@@ -10,7 +10,7 @@ import torch
 import time
 import torch.nn.functional as F
 import models
-import util
+import data
 from config import DefaultConfig
 import pandas as pd
 import os
@@ -30,7 +30,7 @@ def main(**kwargs):
         args.device = None
         torch.manual_seed(args.seed)  # set random seed for cpu
 
-    train_iter, val_iter, test_iter, args.vocab_size, vectors = util.load_data(args)
+    train_iter, val_iter, test_iter, args.vocab_size, vectors = data.load_data(args)
 
     args.print_config()
 
