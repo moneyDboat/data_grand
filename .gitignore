@@ -4,6 +4,7 @@
 emb-100.txt
 val_set.csv
 snapshot/
+.idea/
 .idea/workspace.xml
 emb/
 dataset/
