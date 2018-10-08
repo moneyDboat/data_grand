@@ -1,6 +1,7 @@
 # 2018“达观杯”文本智能处理挑战赛
 ## Top 10 “万里阳光号”解决方案
-更详细的比赛经验分享见知乎专栏文章https://zhuanlan.zhihu.com/p/45391378  
+更详细的比赛经验分享见我的知乎专栏文章https://zhuanlan.zhihu.com/p/45391378  
+
 比赛详情见 [达观杯文本智能处理挑战赛](http://www.dcjingsai.com/common/cmpt/%E2%80%9C%E8%BE%BE%E8%A7%82%E6%9D%AF%E2%80%9D%E6%96%87%E6%9C%AC%E6%99%BA%E8%83%BD%E5%A4%84%E7%90%86%E6%8C%91%E6%88%98%E8%B5%9B_%E7%AB%9E%E8%B5%9B%E4%BF%A1%E6%81%AF.html)  
 最终排名见 [排行榜](
 http://www.dcjingsai.com/common/cmpt/%E2%80%9C%E8%BE%BE%E8%A7%82%E6%9D%AF%E2%80%9D%E6%96%87%E6%9C%AC%E6%99%BA%E8%83%BD%E5%A4%84%E7%90%86%E6%8C%91%E6%88%98%E8%B5%9B_%E6%8E%92%E8%A1%8C%E6%A6%9C.html)
